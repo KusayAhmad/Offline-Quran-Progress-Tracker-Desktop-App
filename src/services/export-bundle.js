@@ -7,6 +7,7 @@ const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 
 /**
  * Export a full bundle (zip) containing all data.
@@ -43,15 +44,8 @@ async function exportBundle(db, filepath) {
   const circleName = profile.name_en || '';
   const institution = profile.institution || '';
 
-  // Generate a simple source_id hash from teacher + institution + timestamp
-  const sourceStr = teacherName + institution + exportDate;
-  let sourceHash = 0;
-  for (let i = 0; i < sourceStr.length; i++) {
-    const ch = sourceStr.charCodeAt(i);
-    sourceHash = ((sourceHash << 5) - sourceHash) + ch;
-    sourceHash = sourceHash & sourceHash; // Convert to 32-bit integer
-  }
-  const sourceId = Math.abs(sourceHash).toString(36);
+  // Generate a unique source_id using cryptographically random bytes
+  const sourceId = crypto.randomBytes(8).toString('hex');
 
   const metadata = {
     version: '1.0.0',

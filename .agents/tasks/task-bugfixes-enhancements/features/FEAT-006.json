@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-006",
+  "type": "fix",
+  "description": "Address code review findings: missing filter bar CSS, init race condition, weak source_id hash, XSS in showResult, duplicated report logic, and N+1 query comment.",
+  "status": "in_progress",
+  "steps": [
+    "Step 1: Add CSS styles for .reports-filter-bar and .filter-select to src/renderer/css/reports.css",
+    "Step 2: Make init() async and await applyStoredLanguage() before navigate('dashboard') in src/renderer/js/app.js",
+    "Step 3: Replace DJB hash in src/services/export-bundle.js with crypto.randomBytes(8).toString('hex')",
+    "Step 4: Escape result.message using escapeHtml() in import-export.js showResult()",
+    "Step 5: Factor out shared student-summary-building logic in src/services/reports.js into a helper function",
+    "Step 6: Add a comment noting the N+1 serial loop is acceptable for typical 5 levels in reports.js renderer"
+  ],
+  "acceptance_criteria": [
+    "Filter bar renders with proper layout in reports screen",
+    "Language is applied before first navigation occurs",
+    "Source ID uses cryptographically random bytes instead of DJB hash",
+    "Error messages are HTML-escaped before innerHTML injection",
+    "Shared report logic is factored into a helper function",
+    "N+1 loop has explanatory comment",
+    "All 136 tests continue to pass"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage and confirm all 136 tests pass"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

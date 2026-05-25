@@ -199,7 +199,7 @@ const ImportExportScreen = {
       container.innerHTML = '<p>تمت العملية بنجاح</p>';
     } else {
       container.className = 'ie-result ie-result-error';
-      container.innerHTML = `<p>${result.message || 'حدث خطأ'}</p>`;
+      container.innerHTML = `<p>${escapeHtml(result.message || 'حدث خطأ')}</p>`;
     }
   }
 };

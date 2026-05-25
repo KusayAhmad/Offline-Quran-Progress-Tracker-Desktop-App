@@ -4,6 +4,40 @@
  */
 
 /**
+ * Build a student summary with status counts and progress percentage.
+ * Shared helper used by getClassReport and getClassReportFiltered.
+ * @param {object} db - Database instance
+ * @param {number} studentId - Student ID
+ * @param {string|null} scopeSurahQuery - SQL query fragment for scoping surahs (null = all surahs)
+ * @param {Array} scopeQueryParams - Parameters for the scope query
+ * @param {number} totalSurahs - Total number of surahs for percentage calculation
+ * @returns {object} - { statusCounts, progressPercentage, memorizedTotal }
+ */
+function buildStudentSummary(db, studentId, scopeSurahQuery, scopeQueryParams, totalSurahs) {
+  let progress;
+  if (scopeSurahQuery) {
+    progress = db.prepare(scopeSurahQuery).all(...scopeQueryParams, studentId);
+  } else {
+    progress = db.prepare(
+      'SELECT status, COUNT(*) as count FROM progress WHERE student_id = ? GROUP BY status'
+    ).all(studentId);
+  }
+
+  const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
+  let tracked = 0;
+  progress.forEach(p => {
+    statusCounts[p.status] = p.count;
+    tracked += p.count;
+  });
+  statusCounts.NOT_STARTED = totalSurahs - tracked;
+
+  const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
+  const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+
+  return { statusCounts, progressPercentage, memorizedTotal };
+}
+
+/**
  * Get detailed report for a single student.
  */
 function getStudentReport(db, studentId) {
@@ -69,26 +103,13 @@ function getClassReport(db, profileId) {
   const totalSurahs = db.prepare('SELECT COUNT(*) as count FROM surahs').get().count;
 
   const studentSummaries = students.map(student => {
-    const progress = db.prepare(
-      'SELECT status, COUNT(*) as count FROM progress WHERE student_id = ? GROUP BY status'
-    ).all(student.id);
-
-    const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
-    let tracked = 0;
-    progress.forEach(p => {
-      statusCounts[p.status] = p.count;
-      tracked += p.count;
-    });
-    statusCounts.NOT_STARTED = totalSurahs - tracked;
-
-    const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
-    const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+    const summary = buildStudentSummary(db, student.id, null, [], totalSurahs);
 
     return {
       ...student,
-      statusCounts,
-      progressPercentage,
-      memorizedTotal
+      statusCounts: summary.statusCounts,
+      progressPercentage: summary.progressPercentage,
+      memorizedTotal: summary.memorizedTotal
     };
   });
 
@@ -192,31 +213,22 @@ function getClassReportFiltered(db, filters) {
 
     totalSurahs = db.prepare('SELECT COUNT(*) as count FROM level_surahs WHERE level_id = ?').get(levelId).count;
 
-    const studentSummaries = students.map(student => {
-      const progress = db.prepare(`
+    const scopeQuery = `
         SELECT p.status, COUNT(*) as count
         FROM progress p
         INNER JOIN level_surahs ls ON p.surah_id = ls.surah_id
-        WHERE p.student_id = ? AND ls.level_id = ?
+        WHERE ls.level_id = ? AND p.student_id = ?
         GROUP BY p.status
-      `).all(student.id, levelId);
+      `;
 
-      const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
-      let tracked = 0;
-      progress.forEach(p => {
-        statusCounts[p.status] = p.count;
-        tracked += p.count;
-      });
-      statusCounts.NOT_STARTED = totalSurahs - tracked;
-
-      const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
-      const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+    const studentSummaries = students.map(student => {
+      const summary = buildStudentSummary(db, student.id, scopeQuery, [levelId], totalSurahs);
 
       return {
         ...student,
-        statusCounts,
-        progressPercentage,
-        memorizedTotal,
+        statusCounts: summary.statusCounts,
+        progressPercentage: summary.progressPercentage,
+        memorizedTotal: summary.memorizedTotal,
         totalSurahsForCalc: totalSurahs
       };
     });
@@ -240,26 +252,13 @@ function getClassReportFiltered(db, filters) {
     totalSurahs = db.prepare('SELECT COUNT(*) as count FROM surahs').get().count;
 
     const studentSummaries = students.map(student => {
-      const progress = db.prepare(
-        'SELECT status, COUNT(*) as count FROM progress WHERE student_id = ? GROUP BY status'
-      ).all(student.id);
-
-      const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
-      let tracked = 0;
-      progress.forEach(p => {
-        statusCounts[p.status] = p.count;
-        tracked += p.count;
-      });
-      statusCounts.NOT_STARTED = totalSurahs - tracked;
-
-      const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
-      const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+      const summary = buildStudentSummary(db, student.id, null, [], totalSurahs);
 
       return {
         ...student,
-        statusCounts,
-        progressPercentage,
-        memorizedTotal,
+        statusCounts: summary.statusCounts,
+        progressPercentage: summary.progressPercentage,
+        memorizedTotal: summary.memorizedTotal,
         totalSurahsForCalc: totalSurahs
       };
     });

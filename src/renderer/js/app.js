@@ -63,7 +63,7 @@ const AppRouter = {
     }
   },
 
-  init() {
+  async init() {
     // Setup navigation click handlers
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', (e) => {
@@ -75,8 +75,8 @@ const AppRouter = {
       });
     });
 
-    // Apply stored language settings
-    this.applyStoredLanguage();
+    // Apply stored language settings before first navigation to prevent direction flash
+    await this.applyStoredLanguage();
 
     // Render initial screen
     this.navigate('dashboard');

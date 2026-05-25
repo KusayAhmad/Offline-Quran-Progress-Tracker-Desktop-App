@@ -89,6 +89,9 @@ const ReportsScreen = {
       } else if (tab === 'level-summary') {
         const levels = await window.api.getLevels();
         const levelReports = [];
+        // N+1: Each getLevelReport call issues multiple SQL queries per level.
+        // This is acceptable for the typical 5 levels in a halqa. For larger
+        // numbers of levels, consider a batch endpoint.
         for (const level of levels) {
           const report = await window.api.getLevelReport(level.id);
           if (report) {
