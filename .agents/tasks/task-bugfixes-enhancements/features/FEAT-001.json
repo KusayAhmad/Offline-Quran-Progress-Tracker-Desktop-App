@@ -2,7 +2,7 @@
   "id": "FEAT-001",
   "type": "fix",
   "description": "Fix language persistence bug - the settings service always returns hardcoded language 'ar' instead of reading/writing from the database. Add a settings table to store key-value pairs including language, and ensure the UI applies the language immediately and on reload.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Add a 'settings' table to src/db/schema.js with columns: id, key (TEXT UNIQUE), value (TEXT), updated_at. Add CREATE TABLE IF NOT EXISTS and an index on key.",
     "Step 2: Update src/services/settings.js - rewrite getSettings() to read from the new settings table (falling back to defaults). Rewrite updateSettings() to upsert key-value pairs into the settings table. The language key must be stored and retrieved properly. Keep backward compatibility by also reading teacher_name/school_name/class_name from the profiles table if they exist there.",
@@ -21,5 +21,5 @@
     "Run npx jest --no-coverage and confirm all tests pass including new settings tests"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 123 tests pass (115 existing + 8 new). The settings table uses ON CONFLICT(key) DO UPDATE for upsert. Profile fields remain in profiles table for backward compatibility."
 }
