@@ -83,6 +83,12 @@ const SettingsScreen = {
 
     try {
       const result = await window.api.updateSettings(data);
+      if (result.success) {
+        // Apply language change immediately
+        const lang = data.language || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
       this.showResult(result);
     } catch (err) {
       this.showResult({ success: false, message: err.message });

@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Fix the progress matrix dropdown visibility issue when only one student exists in Full Grid View, and add helper text/tooltips to clarify the difference between Level View and Full Grid View.",
+  "status": "pending",
+  "steps": [
+    "Step 1: Update src/renderer/css/progress-matrix.css - Change .progress-cell-dropdown positioning to detect available space. Add a CSS rule for .progress-cell-dropdown.open-upward that positions the dropdown above the cell (bottom: 100% instead of top: 100%). Increase .matrix-content min-height to 400px.",
+    "Step 2: Update src/renderer/js/screens/progress-matrix.js attachCellEvents() - When toggling the dropdown, calculate whether the dropdown would overflow the viewport bottom. If so, add class 'open-upward' to the dropdown element. Remove the class when it would fit below normally.",
+    "Step 3: Add min-height to .matrix-grid-container and .matrix-full-grid .matrix-scroll-wrapper (at least 350px) so that even with a single row, there is enough vertical space for the dropdown to appear.",
+    "Step 4: Add .progress-cell-dropdown z-index to 100 (currently 50) so it renders above sticky headers and other elements.",
+    "Step 5: Add helper text near the view tabs in the progress-matrix screen. After the .matrix-view-tabs div, add a .matrix-view-helper paragraph that describes the current view. When switching tabs, update the helper text: Level View = 'عرض مركز يظهر المستوى المختار وجميع الطلاب والسور المسندة إليه' (A focused view showing one selected level with its students and assigned surahs), Full Grid View = 'عرض شامل يظهر الشبكة الكاملة لجميع الطلاب بشكل مشابه لجدول Excel' (A comprehensive view showing the full grid of all students in an Excel-like format). Also add helpers for Student View and Surah View.",
+    "Step 6: Update the matrix-status-legend to use position: sticky; top: 0; z-index: 5 so it remains visible while scrolling the matrix content."
+  ],
+  "acceptance_criteria": [
+    "When only one student exists and the full grid view is active, clicking a cell shows the dropdown fully visible (not clipped)",
+    "The dropdown opens upward when there is not enough space below",
+    "Helper text is shown below the view tabs explaining the current view",
+    "The status legend remains visible while scrolling the grid",
+    "No CSS regressions in other views"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage to confirm no test regressions",
+    "Visually inspect the CSS changes are syntactically valid"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

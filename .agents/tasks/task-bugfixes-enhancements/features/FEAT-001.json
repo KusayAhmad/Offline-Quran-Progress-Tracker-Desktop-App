@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-001",
+  "type": "fix",
+  "description": "Fix language persistence bug - the settings service always returns hardcoded language 'ar' instead of reading/writing from the database. Add a settings table to store key-value pairs including language, and ensure the UI applies the language immediately and on reload.",
+  "status": "in_progress",
+  "steps": [
+    "Step 1: Add a 'settings' table to src/db/schema.js with columns: id, key (TEXT UNIQUE), value (TEXT), updated_at. Add CREATE TABLE IF NOT EXISTS and an index on key.",
+    "Step 2: Update src/services/settings.js - rewrite getSettings() to read from the new settings table (falling back to defaults). Rewrite updateSettings() to upsert key-value pairs into the settings table. The language key must be stored and retrieved properly. Keep backward compatibility by also reading teacher_name/school_name/class_name from the profiles table if they exist there.",
+    "Step 3: Update src/renderer/js/screens/settings.js - after saveSettings(), apply the language change immediately by updating document.documentElement dir and lang attributes. Also update sidebar labels if language changes.",
+    "Step 4: Update src/renderer/js/app.js - on init(), call window.api.getSettings() and apply the stored language (set html dir='rtl'/'ltr', lang='ar'/'en'). This ensures language persists across navigation and restart.",
+    "Step 5: Add tests in tests/services/settings.test.js - test that getSettings returns defaults when no settings exist, that updateSettings persists language, that getSettings returns the persisted language value, and that updating other fields does not reset language."
+  ],
+  "acceptance_criteria": [
+    "getSettings() returns the language that was last saved via updateSettings()",
+    "After calling updateSettings({language: 'en'}), subsequent getSettings() calls return language: 'en'",
+    "The settings table is created by schema.js",
+    "All existing tests continue to pass",
+    "New settings tests pass"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage and confirm all tests pass including new settings tests"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

@@ -68,8 +68,27 @@ const AppRouter = {
       });
     });
 
+    // Apply stored language settings
+    this.applyStoredLanguage();
+
     // Render initial screen
     this.navigate('dashboard');
+  },
+
+  async applyStoredLanguage() {
+    try {
+      const settings = await window.api.getSettings();
+      if (settings) {
+        this.settings = settings;
+        const lang = settings.language || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
+    } catch (err) {
+      // Fallback to Arabic if settings load fails
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+    }
   }
 };
 

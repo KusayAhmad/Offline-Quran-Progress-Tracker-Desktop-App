@@ -1,0 +1,7 @@
+{
+  "task_id": "task-bugfixes-enhancements",
+  "task_description": "Address 9 bug reports and enhancement requests for the Offline Quran Progress Tracker: fix language persistence, add import template, fix grid dropdown visibility, clarify view differences, add report filtering by level, show progress calculation basis, support import consolidation for lead teachers, improve reports, and refine UI/UX.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004", "FEAT-005"],
+  "blocked_reason": null
+}
