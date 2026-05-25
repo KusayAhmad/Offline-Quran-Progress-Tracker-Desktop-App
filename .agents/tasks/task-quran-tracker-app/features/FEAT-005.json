@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "fix",
   "description": "Address code review findings: XSS escaping, transactional imports, backup API, restore with db reopen, student profile level-scoped progress, and IPC input validation.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create src/renderer/js/utils/escape-html.js with escapeHtml utility",
     "Apply escapeHtml in all renderer screens where user data is interpolated",
@@ -23,5 +23,5 @@
     "Critical IPC handlers validate input and return error objects for invalid input"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 115 tests pass after fixes. The backup service API changed from accepting (dbPath, targetDir) to (db, targetDir) since better-sqlite3 backup() is a method on the db instance. The restore handler now properly closes and reopens the db connection. Import transactions wrap the entire replace-mode operation (deletes + inserts) ensuring atomicity."
 }
