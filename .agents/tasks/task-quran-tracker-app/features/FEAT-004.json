@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Reports system, Excel/PDF/Bundle export, Excel/Bundle import with merge/replace modes, Backup & Restore, and Settings screen. This completes all remaining functionality: reporting views, full export pipeline (Excel with multiple worksheets, PDF reports, compressed bundles), import with conflict handling, database backup/restore with auto-backup, and application settings.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Create src/services/reports.js - Reports service: getStudentReport(student_id), getClassReport(profile_id), getLevelReport(level_id), getWeakReport(), getReviewNeededReport(), getGlobalSummary(). Each returns structured data suitable for rendering and export.",
     "Create src/renderer/js/screens/reports.js - Reports screen: tabbed interface for report types (Student Report, Class Report, Level Report, Weak Students, Review Needed, Global Summary). Each tab renders appropriate data with tables and charts. Include export buttons for each report.",
@@ -41,5 +41,5 @@
     "Run a script to verify export produces a valid file: `node -e \"const db = require('./src/db/database.js'); const exp = require('./src/services/export.js'); exp.exportToExcel({}, '/tmp/test-export.xlsx').then(() => console.log('Export OK'))\"` "
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 115 tests pass (88 existing + 27 new). The exceljs library has a transitive dependency (jszip -> setimmediate) that requires globalThis.global polyfill in bare Node.js v22 execution, but Jest provides this automatically so tests work fine. The Electron runtime also provides it. Added random suffix to backup filenames to ensure uniqueness when creating multiple backups within the same millisecond."
 }
