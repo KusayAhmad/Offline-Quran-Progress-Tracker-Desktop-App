@@ -1,0 +1,45 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Reports system, Excel/PDF/Bundle export, Excel/Bundle import with merge/replace modes, Backup & Restore, and Settings screen. This completes all remaining functionality: reporting views, full export pipeline (Excel with multiple worksheets, PDF reports, compressed bundles), import with conflict handling, database backup/restore with auto-backup, and application settings.",
+  "status": "pending",
+  "steps": [
+    "Create src/services/reports.js - Reports service: getStudentReport(student_id), getClassReport(profile_id), getLevelReport(level_id), getWeakReport(), getReviewNeededReport(), getGlobalSummary(). Each returns structured data suitable for rendering and export.",
+    "Create src/renderer/js/screens/reports.js - Reports screen: tabbed interface for report types (Student Report, Class Report, Level Report, Weak Students, Review Needed, Global Summary). Each tab renders appropriate data with tables and charts. Include export buttons for each report.",
+    "Create src/renderer/css/reports.css - Report styles: print-friendly layout, chart containers, summary sections.",
+    "Create src/services/export.js - Export service using exceljs: exportToExcel(data, filepath) creates workbook with worksheets (Students, Levels, Surahs, Progress, Notes, Summary). Each worksheet has proper headers and formatted data. Apply RTL formatting where possible.",
+    "Create src/services/export-pdf.js - PDF export service using pdfkit: exportStudentPDF(student_id, filepath), exportClassPDF(filepath), exportLevelPDF(level_id, filepath), exportSummaryPDF(filepath). Include Arabic text support, status colors, tables, and headers.",
+    "Create src/services/export-bundle.js - Bundle export using adm-zip: exportBundle(filepath) creates a compressed .zip containing: data.json (full database export), report.xlsx, summary.pdf, metadata.json (version, export date, teacher name, student count).",
+    "Create src/services/import.js - Import service: importFromExcel(filepath, mode), importFromBundle(filepath, mode). Modes: 'merge' (add new records, update existing by matching name/surah), 'replace' (clear and reimport). Handle conflicts: duplicate students by name, mismatched levels. Return import summary with counts and conflicts.",
+    "Create src/renderer/js/screens/import-export.js - Import/Export screen: sections for Excel Export, PDF Export, Bundle Export, Excel Import, Bundle Import. Each with file picker (Electron dialog), mode selection for imports, progress indicator, result summary. Lead teacher consolidation: ability to import multiple bundles and merge them.",
+    "Create src/renderer/css/import-export.css - Import/export screen styles.",
+    "Create src/services/backup.js - Backup service: createBackup(targetPath) copies SQLite file to target, restoreBackup(sourcePath) replaces current DB, getBackupList(backupDir) lists available backups, autoBackup() called on app close. Default backup directory in userData/backups/.",
+    "Create src/renderer/js/screens/backup.js - Backup & Restore screen: manual backup button with folder picker, restore button with file picker and confirmation, backup history list, auto-backup toggle, backup path configuration.",
+    "Create src/renderer/css/backup.css - Backup screen styles.",
+    "Create src/services/settings.js - Settings service: getSettings(), updateSettings(data). Store in a settings.json file or in the profiles table. Settings: language (ar/en), rtl toggle, teacher name, school name, backup path, export default path.",
+    "Create src/renderer/js/screens/settings.js - Settings screen: form with all configurable options (language, RTL, teacher name, school/circle name, backup path, export settings). Save button persists to settings store.",
+    "Create src/renderer/css/settings.css - Settings form styles.",
+    "Register all IPC handlers for reports, export, import, backup, and settings operations in main.js. Use Electron dialog API for file/folder pickers.",
+    "Implement auto-backup on app close: in main.js before-quit event, call backup service to save current DB state.",
+    "Add exports_history and imports_history tracking: log each export/import operation with timestamp, type, file path, record counts.",
+    "Add tests: tests/services/export.test.js (verify Excel generation), tests/services/import.test.js (verify merge/replace import), tests/services/backup.test.js (verify backup/restore)."
+  ],
+  "acceptance_criteria": [
+    "npm test passes including export, import, and backup service tests",
+    "Reports screen shows data for each report type with proper formatting",
+    "Excel export creates a valid .xlsx file with multiple worksheets containing correct data",
+    "PDF export creates a readable PDF with Arabic text and status colors",
+    "Bundle export creates a .zip with JSON, Excel, PDF, and metadata",
+    "Excel import supports merge and replace modes with conflict detection",
+    "Bundle import can restore a full dataset from a previously exported bundle",
+    "Backup creates a copy of the database file that can be restored",
+    "Auto-backup triggers on app close",
+    "Settings persist across app restarts"
+  ],
+  "verification": [
+    "Run `npm test` and confirm all tests pass",
+    "Run a script to verify export produces a valid file: `node -e \"const db = require('./src/db/database.js'); const exp = require('./src/services/export.js'); exp.exportToExcel({}, '/tmp/test-export.xlsx').then(() => console.log('Export OK'))\"` "
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

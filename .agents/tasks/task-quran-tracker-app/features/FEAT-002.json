@@ -1,0 +1,39 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Students management, Levels management, Surahs management, and Student Profile screens. Full CRUD for students (add, edit, archive, search, filter), levels (add, edit, reorder, delete, duplicate), and surahs (list, level mapping, edit). Student profile with basic info, progress summary, notes, and review history.",
+  "status": "pending",
+  "steps": [
+    "Create src/services/students.js - Student service: getAllStudents(filters), getStudent(id), addStudent({full_name, level_id, gender, notes}), updateStudent(id, data), archiveStudent(id), searchStudents(query), getStudentsByLevel(level_id), getStudentProgress(student_id).",
+    "Create src/services/levels.js - Level service: getAllLevels(), getLevel(id), addLevel({name, description}), updateLevel(id, data), deleteLevel(id), duplicateLevel(id), reorderLevels(orderedIds), getLevelSurahs(level_id), addSurahToLevel(level_id, surah_id), removeSurahFromLevel(level_id, surah_id), reorderLevelSurahs(level_id, orderedIds).",
+    "Create src/services/surahs.js - Surah service: getAllSurahs(), getSurah(id), updateSurah(id, data), getSurahsByLevel(level_id).",
+    "Create src/services/notes.js - Notes service: getStudentNotes(student_id), addNote(student_id, note_text, created_by), deleteNote(note_id).",
+    "Create src/renderer/js/screens/students.js - Students list screen: render table with columns (name, level, class, progress %, last review, status with color chip), implement Add Student modal/form, Edit Student modal, Archive action with confirmation, search input with live filtering, filter by level/status dropdowns. Arabic labels throughout.",
+    "Create src/renderer/js/screens/levels.js - Levels management screen: render list/cards showing level name, order, surahs count, assigned students count. Add Level form, Edit Level inline or modal, Delete with confirmation (only if no students assigned), Duplicate level, Drag-to-reorder or arrow buttons for reordering. Surah assignment panel: show available surahs, assigned surahs, add/remove/reorder.",
+    "Create src/renderer/js/screens/surahs.js - Surahs screen: render full list of 114 surahs with surah number, Arabic name, English name, assigned level. Allow editing surah-level assignments. Filter by level.",
+    "Create src/renderer/js/screens/student-profile.js - Student profile screen: header with student name and status badge, basic info section (level, gender, notes, enrollment date), progress overview (pie chart or progress bar showing memorized/in-progress/not-started percentages), surah-by-surah progress list with status chips, notes section with add/view/delete, review history timeline.",
+    "Create src/renderer/css/students.css - Styles for student list, forms, modals.",
+    "Create src/renderer/css/levels.css - Styles for levels management, surah assignment panel.",
+    "Create src/renderer/css/student-profile.css - Styles for profile layout, progress visualization.",
+    "Register all new IPC handlers in main.js for student, level, surah, and notes operations.",
+    "Create src/renderer/js/components/status-badge.js - Reusable status badge component: renders colored chip with icon, label, and color per status (NOT_STARTED, IN_PROGRESS, MEMORIZED, REVIEW_REQUIRED, WEAK, PERFECT). Include legend component.",
+    "Create src/renderer/js/components/modal.js - Reusable modal component: open/close, title, body content, action buttons, keyboard escape to close.",
+    "Create src/renderer/js/components/table.js - Reusable sortable table component: headers, rows, sorting, optional row click handler.",
+    "Add tests: tests/services/students.test.js, tests/services/levels.test.js to verify CRUD operations work correctly with the database."
+  ],
+  "acceptance_criteria": [
+    "npm test passes - student and level service tests verify CRUD operations",
+    "Students screen renders a table with all required columns and supports add/edit/archive/search/filter",
+    "Levels screen allows full CRUD with surah assignment and reordering",
+    "Surahs screen shows all 114 surahs with level mappings",
+    "Student profile displays progress, notes, and review history",
+    "All status indicators use the color + label + icon pattern",
+    "All UI text is in Arabic with RTL layout"
+  ],
+  "verification": [
+    "Run `npm test` and confirm all tests pass including new service tests",
+    "Run `node -e \"const db = require('./src/db/database.js'); const s = require('./src/services/students.js'); console.log(s.getAllStudents())\"` to verify service layer works"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

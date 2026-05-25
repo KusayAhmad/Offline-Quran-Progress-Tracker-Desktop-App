@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self';">
+  <title>متتبع حفظ القرآن</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1 class="app-title">متتبع الحفظ</h1>
+        <p class="app-subtitle">Quran Progress Tracker</p>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li>
+            <a href="#" class="nav-item active" data-screen="dashboard">
+              <span class="nav-icon">&#x1F4CA;</span>
+              <span class="nav-label">لوحة التحكم</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="students">
+              <span class="nav-icon">&#x1F464;</span>
+              <span class="nav-label">الطلاب</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="levels">
+              <span class="nav-icon">&#x1F4DA;</span>
+              <span class="nav-label">المستويات</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="surahs">
+              <span class="nav-icon">&#x1F4D6;</span>
+              <span class="nav-label">السور</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="progress-matrix">
+              <span class="nav-icon">&#x1F4CB;</span>
+              <span class="nav-label">مصفوفة التقدم</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="reports">
+              <span class="nav-icon">&#x1F4C8;</span>
+              <span class="nav-label">التقارير</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="import-export">
+              <span class="nav-icon">&#x1F4E5;</span>
+              <span class="nav-label">استيراد / تصدير</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="backup">
+              <span class="nav-icon">&#x1F4BE;</span>
+              <span class="nav-label">النسخ الاحتياطي</span>
+            </a>
+          </li>
+          <li>
+            <a href="#" class="nav-item" data-screen="settings">
+              <span class="nav-icon">&#x2699;</span>
+              <span class="nav-label">الإعدادات</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <div id="screen-container">
+        <!-- Screens are rendered here by the router -->
+      </div>
+    </main>
+  </div>
+
+  <script src="js/screens/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

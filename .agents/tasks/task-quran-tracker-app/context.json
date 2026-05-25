@@ -1,0 +1,31 @@
+{
+  "project_type": "Electron Desktop Application - Offline Quran Progress Tracker",
+  "language": "JavaScript (Node.js + HTML/CSS)",
+  "build_system": "npm with electron-builder for packaging",
+  "test_framework": "Jest for unit tests, Spectron/Playwright for E2E (optional in v1)",
+  "build_command": "npm run build",
+  "test_command": "npm test",
+  "verification_instructions": "1. Run npm install to install dependencies. 2. Run npm test to verify unit tests pass. 3. Run npm start to launch the Electron app and verify it opens without errors.",
+  "snapshot_or_generated_files": null,
+  "setup_instructions": "1. cd /projects/sandbox/Offline-Quran-Progress-Tracker-Desktop-App 2. npm install 3. npm start",
+  "environment_constraints": "Node.js v22.22.3, npm 11.4.2, x86_64 Linux. Full internet access available for npm packages. No display server available so Electron GUI cannot be visually tested but can be launched in headless/no-sandbox mode for validation.",
+  "contribution_requirements": "Greenfield project - establish conventions from scratch",
+  "key_patterns": "Electron main/renderer process split. Preload script for IPC bridge. better-sqlite3 for database. RTL Arabic-first UI. Status color system with labels and icons.",
+  "relevant_files": [
+    "main.js",
+    "preload.js",
+    "package.json",
+    "src/db/schema.js",
+    "src/db/seeds.js",
+    "src/renderer/index.html",
+    "src/renderer/css/main.css",
+    "src/renderer/js/app.js",
+    "src/services/students.js",
+    "src/services/levels.js",
+    "src/services/progress.js",
+    "src/services/export.js",
+    "src/services/import.js",
+    "src/services/backup.js"
+  ],
+  "directory_structure": "quran-tracker/ - main.js (Electron main process), preload.js (IPC bridge), src/renderer/ (HTML/CSS/JS frontend), src/db/ (SQLite schema and seeds), src/services/ (business logic), src/utils/ (helpers), src/data/ (static Quran data)"
+}

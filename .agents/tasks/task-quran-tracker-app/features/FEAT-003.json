@@ -1,0 +1,35 @@
+{
+  "id": "FEAT-003",
+  "type": "feat",
+  "description": "Quran Progress Matrix - the main productivity screen with multiple views (Student View, Surah View, Level View, Color Grid View). Interactive grid for tracking and updating progress per student per surah with sticky headers, status chips, and smooth scrolling.",
+  "status": "pending",
+  "steps": [
+    "Create src/services/progress.js - Progress service: getProgressMatrix(filters), getStudentProgress(student_id), getSurahProgress(surah_id), getLevelProgress(level_id), updateProgress(student_id, surah_id, {status, score, notes}), bulkUpdateProgress(updates[]), getProgressStats(student_id).",
+    "Create src/renderer/js/screens/progress-matrix.js - Progress Matrix screen with view switcher tabs: Student View, Surah View, Level View, Color Grid View. Each view fetches appropriate data and renders the matrix.",
+    "Implement Student View in progress-matrix.js: Select a student from dropdown, show grid of all surahs assigned to their level with current status chip for each. Click a cell to update status. Show progress percentage header.",
+    "Implement Surah View in progress-matrix.js: Select a surah from dropdown, show all students with their status for that surah. Useful for seeing class-wide progress on a specific surah.",
+    "Implement Level View in progress-matrix.js: Select a level, show matrix of all students in that level vs all surahs in that level. Rows = students, Columns = surahs. Each cell shows status chip.",
+    "Implement Color Grid View in progress-matrix.js: Full matrix view (all students x all surahs for selected level). Clean data-grid with: sticky first column (student names), sticky top header (surah names), smooth scrolling, light grid lines, clean row spacing. Cells use status chips/colored badges (not full-cell color saturation).",
+    "Create src/renderer/js/components/progress-cell.js - Interactive progress cell component: displays current status as colored badge, click to cycle through statuses or open a mini-dropdown to select status. Show tooltip with details (score, last reviewed, notes).",
+    "Create src/renderer/js/components/status-legend.js - Fixed legend component that shows all 6 statuses with color, icon, and Arabic label. Always visible in matrix views.",
+    "Create src/renderer/css/progress-matrix.css - Matrix-specific styles: grid layout with sticky positioning, cell sizing, scroll containers, view tabs, legend positioning. Ensure the matrix is performant with many cells (use CSS grid or table with fixed layout).",
+    "Register IPC handlers for progress operations in main.js.",
+    "Add tests: tests/services/progress.test.js to verify progress CRUD and matrix data retrieval."
+  ],
+  "acceptance_criteria": [
+    "npm test passes including progress service tests",
+    "Progress Matrix screen renders with 4 switchable views",
+    "Student View shows all surahs for a selected student with status chips",
+    "Level View shows a full student x surah grid with sticky headers",
+    "Color Grid View displays clean matrix with proper sticky columns and smooth scroll",
+    "Clicking a progress cell allows status update",
+    "Status legend is always visible in matrix views",
+    "Matrix handles the full 114 surahs without performance issues"
+  ],
+  "verification": [
+    "Run `npm test` and confirm all tests pass",
+    "Run `node -e \"const db = require('./src/db/database.js'); const p = require('./src/services/progress.js'); console.log(p.getProgressMatrix({level_id: 1}))\"` to verify matrix data retrieval"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}

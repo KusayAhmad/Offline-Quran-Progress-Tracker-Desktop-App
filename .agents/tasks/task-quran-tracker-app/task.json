@@ -1,0 +1,7 @@
+{
+  "task_id": "task-quran-tracker-app",
+  "task_description": "Build the Offline Quran Progress Tracker Desktop Application from scratch using Electron, SQLite, and vanilla HTML/CSS/JS. The app tracks Quran memorization progress for students, supports teacher/class organization, multiple progress views, reporting, import/export, and backup - all fully offline with Arabic-first RTL UI.",
+  "status": "in_progress",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}

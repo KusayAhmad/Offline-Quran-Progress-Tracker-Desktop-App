@@ -1,0 +1,38 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Project scaffolding, Electron setup, SQLite database with schema and seed data, and Dashboard screen. This establishes the entire project foundation including package.json, Electron main/preload processes, the complete database schema, Quran surah seed data, default levels, and the Dashboard UI with summary cards.",
+  "status": "in_progress",
+  "steps": [
+    "Create package.json with project metadata, scripts (start, test, build), and dependencies: electron, better-sqlite3, exceljs, pdfkit, chart.js, dayjs, adm-zip. Dev dependencies: electron-builder, jest.",
+    "Create main.js - Electron main process: create BrowserWindow with appropriate size (1200x800), load src/renderer/index.html, handle app lifecycle events (ready, window-all-closed, activate). Enable nodeIntegration:false, contextIsolation:true, preload script.",
+    "Create preload.js - Expose IPC bridge via contextBridge.exposeInMainWorld('api', {...}) for all database operations: getStudents, addStudent, updateStudent, archiveStudent, getLevels, addLevel, updateLevel, deleteLevel, getSurahs, getLevelSurahs, getProgress, updateProgress, getStats, exportExcel, exportPDF, exportBundle, importExcel, importBundle, backup, restore, getProfile, updateProfile, getStudentNotes, addStudentNote.",
+    "Create src/data/surahs.json - Complete list of all 114 Quran surahs with surah_no, name_ar (Arabic), name_en (English transliteration).",
+    "Create src/db/schema.js - Define and create all tables: profiles, levels, surahs, level_surahs, students, progress, student_notes, exports_history, imports_history. Use better-sqlite3 synchronous API. Include proper indexes.",
+    "Create src/db/seeds.js - Seed default levels (5 levels as specified), seed all 114 surahs from surahs.json, create level_surahs mappings (Level 1: An-Nas #114 to Az-Zalzalah #99, Level 2: Al-Bayyinah #98 to Al-A'la #87, Level 3: At-Tariq #86 to Al-Infitar #82, Level 4: At-Takwir #81 to An-Naba #78, Level 5: Al-Mursalat #77 and above meaning #1 to #77).",
+    "Create src/db/database.js - Database initialization: open/create SQLite file in app userData directory, run schema creation, run seeds if tables are empty, export db instance.",
+    "Create src/renderer/index.html - Main HTML shell with RTL direction, Arabic-first meta tags, viewport config, link to CSS, navigation sidebar, main content area with router placeholder, script tags.",
+    "Create src/renderer/css/main.css - Complete design system: CSS custom properties for design tokens (colors, typography, spacing, borders, shadows), status color system (NOT_STARTED=red, IN_PROGRESS=blue, MEMORIZED=green, REVIEW_REQUIRED=yellow, WEAK=orange, PERFECT=dark-green), RTL layout, responsive grid, sidebar navigation styles, card components, table styles, form styles, button styles, modal styles, badge/chip styles for status indicators.",
+    "Create src/renderer/css/dashboard.css - Dashboard-specific styles: summary cards grid, quick actions section, recent updates list.",
+    "Create src/renderer/js/app.js - Main application router: handle navigation between screens (dashboard, students, levels, surahs, student-profile, progress-matrix, reports, import-export, backup, settings). Render active screen, manage sidebar active states.",
+    "Create src/renderer/js/screens/dashboard.js - Dashboard screen: fetch stats via window.api (total students, total levels, surahs count, weak students count, review-required count), render summary cards with icons, render recent updates list, render quick action buttons (Add Student, View Progress, Export Report).",
+    "Wire up IPC handlers in main.js for database operations: register ipcMain.handle() for each API method, connect to database.js service layer.",
+    "Create src/services/stats.js - Statistics service: getOverallStats(), getRecentUpdates(), getWeakStudents(), getReviewRequiredStudents().",
+    "Add basic Jest test configuration in jest.config.js and create tests/db/schema.test.js to verify database schema creation and seeding works correctly."
+  ],
+  "acceptance_criteria": [
+    "npm install completes without errors",
+    "npm test passes - database schema and seeds tests verify tables are created and seed data is inserted correctly",
+    "The Electron app can be launched (npm start) and shows the Dashboard screen with RTL Arabic layout",
+    "Dashboard displays summary cards with correct stats (0 students initially, 5 levels, 114 surahs)",
+    "Navigation sidebar allows switching between screen placeholders",
+    "SQLite database is created in the app's userData directory with all tables and seed data"
+  ],
+  "verification": [
+    "Run `npm install` and confirm exit code 0",
+    "Run `npm test` and confirm all tests pass",
+    "Run `npx electron --no-sandbox --headless . &` briefly to confirm the app initializes without crashes (check stderr for errors)"
+  ],
+  "blocked_reason": null,
+  "findings": ""
+}
