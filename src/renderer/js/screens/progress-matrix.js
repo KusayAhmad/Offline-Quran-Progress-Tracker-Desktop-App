@@ -33,6 +33,8 @@ const ProgressMatrixScreen = {
         <button class="matrix-tab" data-view="grid">الشبكة الكاملة</button>
       </div>
 
+      <p class="matrix-view-helper" id="matrix-view-helper"></p>
+
       <div class="matrix-controls" id="matrix-controls"></div>
       <div class="matrix-content" id="matrix-content">
         <div class="empty-state">
@@ -50,14 +52,30 @@ const ProgressMatrixScreen = {
         document.querySelectorAll('.matrix-tab').forEach(t => t.classList.remove('active'));
         e.target.classList.add('active');
         this.currentView = e.target.dataset.view;
+        this.updateViewHelper();
         this.renderControls();
         this.renderContent();
       });
     });
 
     // Initial render
+    this.updateViewHelper();
     this.renderControls();
     this.renderContent();
+  },
+
+  updateViewHelper() {
+    const helper = document.getElementById('matrix-view-helper');
+    if (!helper) return;
+
+    const helperTexts = {
+      student: '\u0639\u0631\u0636 \u0627\u0644\u0637\u0627\u0644\u0628: \u0627\u062E\u062A\u0631 \u0637\u0627\u0644\u0628\u0627 \u0644\u0639\u0631\u0636 \u062C\u0645\u064A\u0639 \u0627\u0644\u0633\u0648\u0631 \u0648\u062D\u0627\u0644\u0629 \u062D\u0641\u0638\u0647 \u0644\u0643\u0644 \u0633\u0648\u0631\u0629',
+      surah: '\u0639\u0631\u0636 \u0627\u0644\u0633\u0648\u0631\u0629: \u0627\u062E\u062A\u0631 \u0633\u0648\u0631\u0629 \u0644\u0639\u0631\u0636 \u062D\u0627\u0644\u0629 \u062C\u0645\u064A\u0639 \u0627\u0644\u0637\u0644\u0627\u0628 \u0641\u064A\u0647\u0627',
+      level: '\u0639\u0631\u0636 \u0627\u0644\u0645\u0633\u062A\u0648\u0649: \u0639\u0631\u0636 \u0645\u0631\u0643\u0632 \u064A\u0638\u0647\u0631 \u0627\u0644\u0645\u0633\u062A\u0648\u0649 \u0627\u0644\u0645\u062E\u062A\u0627\u0631 \u0648\u062C\u0645\u064A\u0639 \u0627\u0644\u0637\u0644\u0627\u0628 \u0648\u0627\u0644\u0633\u0648\u0631 \u0627\u0644\u0645\u0633\u0646\u062F\u0629 \u0625\u0644\u064A\u0647',
+      grid: '\u0627\u0644\u0634\u0628\u0643\u0629 \u0627\u0644\u0643\u0627\u0645\u0644\u0629: \u0639\u0631\u0636 \u0634\u0627\u0645\u0644 \u064A\u0638\u0647\u0631 \u0627\u0644\u0634\u0628\u0643\u0629 \u0627\u0644\u0643\u0627\u0645\u0644\u0629 \u0644\u062C\u0645\u064A\u0639 \u0627\u0644\u0637\u0644\u0627\u0628 \u0628\u0634\u0643\u0644 \u0645\u0634\u0627\u0628\u0647 \u0644\u062C\u062F\u0648\u0644 Excel \u0645\u0639 \u0625\u0645\u0643\u0627\u0646\u064A\u0629 \u0627\u0644\u062A\u0645\u0631\u064A\u0631'
+    };
+
+    helper.textContent = helperTexts[this.currentView] || '';
   },
 
   async renderControls() {
@@ -339,6 +357,17 @@ const ProgressMatrixScreen = {
         if (d !== dropdown) d.classList.add('hidden');
       });
       dropdown.classList.toggle('hidden');
+
+      // Viewport boundary detection for dropdown direction
+      if (!dropdown.classList.contains('hidden')) {
+        const rect = dropdown.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        if (rect.bottom > viewportHeight) {
+          dropdown.classList.add('open-upward');
+        } else {
+          dropdown.classList.remove('open-upward');
+        }
+      }
     });
   },
 

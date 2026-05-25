@@ -7,10 +7,14 @@
   gap: 12px;
   padding: 10px 16px;
   background: var(--bg-secondary, #f8f9fa);
+  background-color: white;
   border-radius: 8px;
   margin-bottom: 16px;
   flex-wrap: wrap;
   border: 1px solid var(--border-color, #e2e8f0);
+  position: sticky;
+  top: 0;
+  z-index: 15;
 }
 
 .matrix-status-legend .legend-title {
@@ -235,7 +239,7 @@
 }
 
 .matrix-data-cell {
-  padding: 4px;
+  padding: 8px 4px;
   text-align: center;
   border-bottom: 1px solid var(--border-light, #f1f5f9);
   border-left: 1px solid var(--border-light, #f1f5f9);
@@ -317,7 +321,7 @@
   position: absolute;
   top: 100%;
   right: 0;
-  z-index: 50;
+  z-index: 100;
   background: white;
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 8px;
@@ -325,6 +329,13 @@
   min-width: 160px;
   padding: 4px;
   margin-top: 4px;
+}
+
+.progress-cell-dropdown.open-upward {
+  bottom: 100%;
+  top: auto;
+  margin-bottom: 4px;
+  margin-top: 0;
 }
 
 .progress-cell-dropdown.hidden {
@@ -349,11 +360,12 @@
 /* Full Grid Mode */
 .matrix-full-grid .matrix-scroll-wrapper {
   max-height: 75vh;
+  min-height: 350px;
 }
 
 /* Matrix Content Area */
 .matrix-content {
-  min-height: 200px;
+  min-height: 400px;
 }
 
 /* Legend item colors */
@@ -385,4 +397,15 @@
 .legend-item.status-perfect {
   background: #f3e8ff;
   color: #7c3aed;
+}
+
+/* View Helper Text */
+.matrix-view-helper {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #64748b);
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 6px;
+  border-right: 3px solid var(--primary, #2563eb);
 }
