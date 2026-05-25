@@ -2,7 +2,7 @@
   "id": "FEAT-006",
   "type": "fix",
   "description": "Address code review findings: missing filter bar CSS, init race condition, weak source_id hash, XSS in showResult, duplicated report logic, and N+1 query comment.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Add CSS styles for .reports-filter-bar and .filter-select to src/renderer/css/reports.css",
     "Step 2: Make init() async and await applyStoredLanguage() before navigate('dashboard') in src/renderer/js/app.js",
@@ -24,5 +24,5 @@
     "Run npx jest --no-coverage and confirm all 136 tests pass"
   ],
   "blocked_reason": null,
-  "findings": null
+  "findings": "All 136 tests pass. buildStudentSummary helper takes a scope query + params for level-filtered progress, or null for all-surahs progress. The helper is used by getClassReport and both branches of getClassReportFiltered."
 }
