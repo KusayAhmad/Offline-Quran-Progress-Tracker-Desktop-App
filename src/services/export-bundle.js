@@ -38,11 +38,29 @@ async function exportBundle(db, filepath) {
   // 4. Add metadata.json
   const profile = db.prepare('SELECT * FROM profiles LIMIT 1').get() || {};
   const studentCount = db.prepare('SELECT COUNT(*) as count FROM students WHERE archived = 0').get().count;
+  const exportDate = new Date().toISOString();
+  const teacherName = profile.name_ar || '';
+  const circleName = profile.name_en || '';
+  const institution = profile.institution || '';
+
+  // Generate a simple source_id hash from teacher + institution + timestamp
+  const sourceStr = teacherName + institution + exportDate;
+  let sourceHash = 0;
+  for (let i = 0; i < sourceStr.length; i++) {
+    const ch = sourceStr.charCodeAt(i);
+    sourceHash = ((sourceHash << 5) - sourceHash) + ch;
+    sourceHash = sourceHash & sourceHash; // Convert to 32-bit integer
+  }
+  const sourceId = Math.abs(sourceHash).toString(36);
+
   const metadata = {
     version: '1.0.0',
-    exportDate: new Date().toISOString(),
-    teacherName: profile.name_ar || '',
-    institution: profile.institution || '',
+    app_version: '1.0.0',
+    export_date: exportDate,
+    teacher_name: teacherName,
+    circle_name: circleName,
+    institution: institution,
+    source_id: sourceId,
     studentCount
   };
   zip.addFile('metadata.json', Buffer.from(JSON.stringify(metadata, null, 2), 'utf8'));

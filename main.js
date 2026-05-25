@@ -336,6 +336,19 @@ app.whenReady().then(() => {
     }
   });
 
+  ipcMain.handle('downloadImportTemplate', async () => {
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        defaultPath: 'import-template.xlsx',
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }]
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return await importService.generateImportTemplate(result.filePath);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
   ipcMain.handle('backup', async () => {
     try {
       const result = await dialog.showOpenDialog(mainWindow, {

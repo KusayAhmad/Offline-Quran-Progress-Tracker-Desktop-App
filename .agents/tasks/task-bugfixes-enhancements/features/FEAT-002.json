@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Add import template download, file structure documentation on the import/export screen, and enhance the export bundle with lead-teacher metadata for consolidation support.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Step 1: Add a new IPC handler 'downloadImportTemplate' in main.js that generates a blank Excel file with the correct sheet names (Students, Levels, Progress) and column headers matching what importFromExcel() expects. Use dialog.showSaveDialog to let the user choose where to save.",
     "Step 2: Add the corresponding API method in preload.js: downloadImportTemplate: () => ipcRenderer.invoke('downloadImportTemplate')",
