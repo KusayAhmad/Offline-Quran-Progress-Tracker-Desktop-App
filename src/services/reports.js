@@ -162,6 +162,119 @@ function getLevelReport(db, levelId) {
 }
 
 /**
+ * Get class report with optional level filter.
+ * When filters.level_id is provided, returns only students in that level
+ * with progress calculated relative to that level's surahs.
+ * When no filter, returns all students with progress relative to all 114 surahs.
+ */
+function getClassReportFiltered(db, filters) {
+  const levelId = filters && filters.level_id ? filters.level_id : null;
+
+  let students;
+  let totalSurahs;
+  let levelName = null;
+  let calculationBasis = 'all';
+
+  if (levelId) {
+    const level = db.prepare('SELECT * FROM levels WHERE id = ?').get(levelId);
+    if (!level) return { students: [], totalStudents: 0, totalSurahs: 114, calculationBasis: 'all', levelName: null };
+
+    levelName = level.name_ar;
+    calculationBasis = 'level';
+
+    students = db.prepare(`
+      SELECT s.*, l.name_ar as level_name
+      FROM students s
+      LEFT JOIN levels l ON s.level_id = l.id
+      WHERE s.level_id = ? AND s.archived = 0
+      ORDER BY s.name_ar
+    `).all(levelId);
+
+    totalSurahs = db.prepare('SELECT COUNT(*) as count FROM level_surahs WHERE level_id = ?').get(levelId).count;
+
+    const studentSummaries = students.map(student => {
+      const progress = db.prepare(`
+        SELECT p.status, COUNT(*) as count
+        FROM progress p
+        INNER JOIN level_surahs ls ON p.surah_id = ls.surah_id
+        WHERE p.student_id = ? AND ls.level_id = ?
+        GROUP BY p.status
+      `).all(student.id, levelId);
+
+      const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
+      let tracked = 0;
+      progress.forEach(p => {
+        statusCounts[p.status] = p.count;
+        tracked += p.count;
+      });
+      statusCounts.NOT_STARTED = totalSurahs - tracked;
+
+      const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
+      const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+
+      return {
+        ...student,
+        statusCounts,
+        progressPercentage,
+        memorizedTotal,
+        totalSurahsForCalc: totalSurahs
+      };
+    });
+
+    return {
+      students: studentSummaries,
+      totalStudents: students.length,
+      totalSurahs,
+      levelName,
+      calculationBasis
+    };
+  } else {
+    students = db.prepare(`
+      SELECT s.*, l.name_ar as level_name
+      FROM students s
+      LEFT JOIN levels l ON s.level_id = l.id
+      WHERE s.archived = 0
+      ORDER BY s.name_ar
+    `).all();
+
+    totalSurahs = db.prepare('SELECT COUNT(*) as count FROM surahs').get().count;
+
+    const studentSummaries = students.map(student => {
+      const progress = db.prepare(
+        'SELECT status, COUNT(*) as count FROM progress WHERE student_id = ? GROUP BY status'
+      ).all(student.id);
+
+      const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
+      let tracked = 0;
+      progress.forEach(p => {
+        statusCounts[p.status] = p.count;
+        tracked += p.count;
+      });
+      statusCounts.NOT_STARTED = totalSurahs - tracked;
+
+      const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
+      const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+
+      return {
+        ...student,
+        statusCounts,
+        progressPercentage,
+        memorizedTotal,
+        totalSurahsForCalc: totalSurahs
+      };
+    });
+
+    return {
+      students: studentSummaries,
+      totalStudents: students.length,
+      totalSurahs,
+      levelName,
+      calculationBasis
+    };
+  }
+}
+
+/**
  * Get report of students/surahs with WEAK status.
  */
 function getWeakReport(db) {
@@ -265,6 +378,7 @@ function getGlobalSummary(db) {
 module.exports = {
   getStudentReport,
   getClassReport,
+  getClassReportFiltered,
   getLevelReport,
   getWeakReport,
   getReviewNeededReport,

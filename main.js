@@ -243,6 +243,14 @@ app.whenReady().then(() => {
     return reportsService.getClassReport(db);
   });
 
+  ipcMain.handle('getClassReportFiltered', (event, filters) => {
+    return reportsService.getClassReportFiltered(db, filters || {});
+  });
+
+  ipcMain.handle('getLevelReport', (event, levelId) => {
+    return reportsService.getLevelReport(db, levelId);
+  });
+
   ipcMain.handle('getWeakReport', () => {
     return reportsService.getWeakReport(db);
   });

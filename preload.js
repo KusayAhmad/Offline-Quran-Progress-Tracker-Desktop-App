@@ -62,6 +62,8 @@ contextBridge.exposeInMainWorld('api', {
 
   // Reports
   getClassReport: () => ipcRenderer.invoke('getClassReport'),
+  getClassReportFiltered: (filters) => ipcRenderer.invoke('getClassReportFiltered', filters),
+  getLevelReport: (levelId) => ipcRenderer.invoke('getLevelReport', levelId),
   getWeakReport: () => ipcRenderer.invoke('getWeakReport'),
   getReviewReport: () => ipcRenderer.invoke('getReviewReport'),
   getGlobalSummary: () => ipcRenderer.invoke('getGlobalSummary'),
