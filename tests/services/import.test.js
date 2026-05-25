@@ -61,6 +61,92 @@ async function createExportFile() {
 }
 
 describe('Import Service', () => {
+  describe('generateImportTemplate', () => {
+    test('creates a valid Excel file with correct sheets', async () => {
+      const filepath = path.join(tmpDir, 'template.xlsx');
+      const result = await importService.generateImportTemplate(filepath);
+
+      expect(result.success).toBe(true);
+      expect(result.path).toBe(filepath);
+      expect(fs.existsSync(filepath)).toBe(true);
+
+      // Open with ExcelJS and verify structure
+      const ExcelJS = require('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filepath);
+
+      const levelsSheet = workbook.getWorksheet('Levels');
+      const studentsSheet = workbook.getWorksheet('Students');
+      const progressSheet = workbook.getWorksheet('Progress');
+
+      expect(levelsSheet).toBeDefined();
+      expect(studentsSheet).toBeDefined();
+      expect(progressSheet).toBeDefined();
+    });
+
+    test('has correct header rows in each sheet', async () => {
+      const filepath = path.join(tmpDir, 'template-headers.xlsx');
+      await importService.generateImportTemplate(filepath);
+
+      const ExcelJS = require('exceljs');
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.readFile(filepath);
+
+      // Levels headers
+      const levelsSheet = workbook.getWorksheet('Levels');
+      const levelsHeader = levelsSheet.getRow(1);
+      expect(levelsHeader.getCell(1).value).toBe('ID');
+      expect(levelsHeader.getCell(2).value).toBe('الاسم (عربي)');
+      expect(levelsHeader.getCell(3).value).toBe('Name (EN)');
+      expect(levelsHeader.getCell(4).value).toBe('الوصف');
+      expect(levelsHeader.getCell(5).value).toBe('الترتيب');
+
+      // Students headers
+      const studentsSheet = workbook.getWorksheet('Students');
+      const studentsHeader = studentsSheet.getRow(1);
+      expect(studentsHeader.getCell(1).value).toBe('ID');
+      expect(studentsHeader.getCell(2).value).toBe('الاسم (عربي)');
+      expect(studentsHeader.getCell(3).value).toBe('Name (EN)');
+      expect(studentsHeader.getCell(4).value).toBe('المستوى');
+      expect(studentsHeader.getCell(5).value).toBe('ملاحظات');
+
+      // Progress headers
+      const progressSheet = workbook.getWorksheet('Progress');
+      const progressHeader = progressSheet.getRow(1);
+      expect(progressHeader.getCell(1).value).toBe('الطالب');
+      expect(progressHeader.getCell(2).value).toBe('السورة');
+      expect(progressHeader.getCell(3).value).toBe('رقم السورة');
+      expect(progressHeader.getCell(4).value).toBe('الحالة');
+    });
+
+    test('generated template can be imported without errors', async () => {
+      const filepath = path.join(tmpDir, 'template-import.xlsx');
+      await importService.generateImportTemplate(filepath);
+
+      // Import into a fresh DB
+      const db2 = new Database(':memory:');
+      db2.pragma('foreign_keys = ON');
+      createSchema(db2);
+      seedDatabase(db2);
+
+      const summary = await importService.importFromExcel(db2, filepath, 'merge');
+
+      // Should import without conflicts
+      expect(summary.conflicts.length).toBe(0);
+      expect(summary.imported).toBeGreaterThan(0);
+
+      // Verify level was imported
+      const levels = db2.prepare('SELECT * FROM levels WHERE name_ar = ?').all('المستوى الأول');
+      expect(levels.length).toBe(1);
+
+      // Verify student was imported
+      const students = db2.prepare('SELECT * FROM students WHERE name_ar = ?').all('أحمد محمد');
+      expect(students.length).toBe(1);
+
+      db2.close();
+    });
+  });
+
   describe('importFromExcel - merge mode', () => {
     test('imports new records', async () => {
       const filepath = await createExportFile();

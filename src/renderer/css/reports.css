@@ -105,3 +105,94 @@
   .screen-header { margin-bottom: 1rem; }
   .report-table { font-size: 0.8rem; }
 }
+
+/* Reports Filter Bar */
+.reports-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.reports-filter-bar label {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+  white-space: nowrap;
+}
+
+.filter-select {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--card-bg, #fff);
+  color: var(--text-primary, #333);
+  min-width: 150px;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: var(--primary-color, #2196f3);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.15);
+}
+
+/* Report Calculation Basis */
+.report-calc-basis {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #64748b);
+  padding: 10px 14px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 6px;
+  margin-bottom: 16px;
+  border-right: 3px solid var(--primary-color, #2196f3);
+}
+
+/* Report Status Legend */
+.report-status-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-color, #e0e0e0);
+}
+
+.report-status-legend .legend-title {
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #666);
+}
+
+.report-status-legend .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.report-status-legend .legend-item.status-weak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.report-status-legend .legend-item.status-review-required {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.report-status-legend .legend-item.status-memorized {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.report-status-legend .legend-item.status-perfect {
+  background: #f3e8ff;
+  color: #7c3aed;
+}

@@ -1,0 +1,30 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Add report filtering by level and circle, show the progress percentage calculation basis in the class report, and add a level-based report summary tab.",
+  "status": "completed",
+  "steps": [
+    "Step 1: Add new IPC handlers in main.js: 'getLevelReport' that calls reportsService.getLevelReport(db, levelId), and 'getClassReportFiltered' that calls a new function reportsService.getClassReportFiltered(db, filters) where filters can include { level_id, circle_name }.",
+    "Step 2: Add API methods in preload.js: getLevelReport: (levelId) => ipcRenderer.invoke('getLevelReport', levelId), getClassReportFiltered: (filters) => ipcRenderer.invoke('getClassReportFiltered', filters).",
+    "Step 3: Add getClassReportFiltered(db, filters) to src/services/reports.js. This function works like getClassReport but when filters.level_id is provided, it only returns students in that level and calculates progress relative to that level's surahs (not all 114). When no filter, it returns all students with progress relative to all 114 surahs.",
+    "Step 4: Update src/renderer/js/screens/reports.js - Add a filter bar above the reports content area with: a level dropdown (populated from window.api.getLevels()), a circle/class name text filter (matching students by their level group). Add a 'Level Summary' tab button.",
+    "Step 5: Update the renderClassReport() method to show the progress calculation basis next to each percentage. For example: '8% (9 من 114 سورة)' meaning '8% (9 of 114 surahs)'. When filtered by level, show '56% (9 من 16 سورة في المستوى)' meaning '56% (9 of 16 surahs in level)'.",
+    "Step 6: Add a new renderLevelSummary() method that shows a per-level breakdown: level name, number of students, average progress percentage, weakest students in that level.",
+    "Step 7: When the level filter is changed, reload the active tab with the filtered data. Connect the filter dropdown change event to re-call loadTabContent() with the selected level_id.",
+    "Step 8: Add tests in tests/services/reports.test.js for getClassReportFiltered: test without filter returns all students with progress based on 114 surahs, test with level_id filter returns only students in that level with progress based on level surahs count."
+  ],
+  "acceptance_criteria": [
+    "The reports screen has a level filter dropdown",
+    "Selecting a level filters the class report to show only students in that level",
+    "Progress percentage shows the calculation basis (e.g., '9 of 16 surahs in level')",
+    "A Level Summary tab shows per-level progress breakdown",
+    "getClassReportFiltered with level_id returns correct filtered results",
+    "All existing tests continue to pass",
+    "New report filter tests pass"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage and confirm all tests pass including new reports tests"
+  ],
+  "blocked_reason": null,
+  "findings": "All 136 tests pass (126 existing + 10 new). getClassReportFiltered returns totalSurahsForCalc per student and calculationBasis/levelName at top level. Level 1 has 16 surahs (99-114) for test assertions. The renderer uses Unicode escapes for Arabic strings consistent with FEAT-003 pattern."
+}

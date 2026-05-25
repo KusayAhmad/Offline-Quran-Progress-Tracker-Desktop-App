@@ -1,44 +1,43 @@
 /**
  * Settings service.
- * Manages application settings stored in the profiles table.
+ * Manages application settings stored in the settings and profiles tables.
  */
-
-const fs = require('fs');
-const path = require('path');
 
 /**
- * Get current settings from the profiles table or defaults.
+ * Get current settings combining the settings table and profiles table.
  */
 function getSettings(db) {
+  // Read language from settings table
+  const langRow = db.prepare("SELECT value FROM settings WHERE key = 'language'").get();
+  const language = langRow ? langRow.value : 'ar';
+
+  // Read profile info from profiles table
   const profile = db.prepare('SELECT * FROM profiles LIMIT 1').get();
 
-  const defaults = {
-    teacher_name: '',
-    school_name: '',
-    class_name: '',
-    language: 'ar',
-    rtl: true,
-    backup_path: '',
-    export_path: ''
-  };
-
-  if (!profile) return defaults;
-
   return {
-    teacher_name: profile.name_ar || '',
-    school_name: profile.institution || '',
-    class_name: profile.name_en || '',
-    language: 'ar',
-    rtl: true,
+    teacher_name: profile ? (profile.name_ar || '') : '',
+    school_name: profile ? (profile.institution || '') : '',
+    class_name: profile ? (profile.name_en || '') : '',
+    language: language,
+    rtl: language === 'ar',
     backup_path: '',
     export_path: ''
   };
 }
 
 /**
- * Update settings - persists to profiles table.
+ * Update settings - persists language to settings table and profile fields to profiles table.
  */
 function updateSettings(db, data) {
+  // Upsert language into settings table if provided
+  if (data.language !== undefined) {
+    const stmt = db.prepare(
+      "INSERT INTO settings (key, value, updated_at) VALUES ('language', ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at"
+    );
+    stmt.run(data.language);
+  }
+
+  // Store profile fields in profiles table
   const existing = db.prepare('SELECT id FROM profiles LIMIT 1').get();
 
   if (existing) {

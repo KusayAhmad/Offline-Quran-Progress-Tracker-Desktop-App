@@ -7,6 +7,7 @@ const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 
 /**
  * Export a full bundle (zip) containing all data.
@@ -38,11 +39,22 @@ async function exportBundle(db, filepath) {
   // 4. Add metadata.json
   const profile = db.prepare('SELECT * FROM profiles LIMIT 1').get() || {};
   const studentCount = db.prepare('SELECT COUNT(*) as count FROM students WHERE archived = 0').get().count;
+  const exportDate = new Date().toISOString();
+  const teacherName = profile.name_ar || '';
+  const circleName = profile.name_en || '';
+  const institution = profile.institution || '';
+
+  // Generate a unique source_id using cryptographically random bytes
+  const sourceId = crypto.randomBytes(8).toString('hex');
+
   const metadata = {
     version: '1.0.0',
-    exportDate: new Date().toISOString(),
-    teacherName: profile.name_ar || '',
-    institution: profile.institution || '',
+    app_version: '1.0.0',
+    export_date: exportDate,
+    teacher_name: teacherName,
+    circle_name: circleName,
+    institution: institution,
+    source_id: sourceId,
     studentCount
   };
   zip.addFile('metadata.json', Buffer.from(JSON.stringify(metadata, null, 2), 'utf8'));

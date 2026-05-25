@@ -87,6 +87,14 @@ function createSchema(db) {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 
+    CREATE TABLE IF NOT EXISTS settings (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      key TEXT NOT NULL UNIQUE,
+      value TEXT,
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_settings_key ON settings(key);
     CREATE INDEX IF NOT EXISTS idx_students_level ON students(level_id);
     CREATE INDEX IF NOT EXISTS idx_students_archived ON students(archived);
     CREATE INDEX IF NOT EXISTS idx_progress_student ON progress(student_id);

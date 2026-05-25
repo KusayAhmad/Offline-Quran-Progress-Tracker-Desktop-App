@@ -307,7 +307,36 @@ async function importFromBundle(db, filepath, mode = 'merge') {
   return summary;
 }
 
+/**
+ * Generate a blank import template Excel file with correct sheet names and headers.
+ * @param {string} filepath - Path to save the template .xlsx file
+ * @returns {object} - Result with success and path
+ */
+async function generateImportTemplate(filepath) {
+  const workbook = new ExcelJS.Workbook();
+
+  // Levels sheet
+  const levelsSheet = workbook.addWorksheet('Levels');
+  levelsSheet.addRow(['ID', 'الاسم (عربي)', 'Name (EN)', 'الوصف', 'الترتيب']);
+  levelsSheet.addRow([1, 'المستوى الأول', 'Level 1', 'وصف المستوى', 1]);
+
+  // Students sheet
+  const studentsSheet = workbook.addWorksheet('Students');
+  studentsSheet.addRow(['ID', 'الاسم (عربي)', 'Name (EN)', 'المستوى', 'ملاحظات']);
+  studentsSheet.addRow([1, 'أحمد محمد', 'Ahmed Mohammed', 'المستوى الأول', 'ملاحظات الطالب']);
+
+  // Progress sheet
+  const progressSheet = workbook.addWorksheet('Progress');
+  progressSheet.addRow(['الطالب', 'السورة', 'رقم السورة', 'الحالة']);
+  progressSheet.addRow(['أحمد محمد', 'الناس', 114, 'MEMORIZED']);
+
+  await workbook.xlsx.writeFile(filepath);
+
+  return { success: true, path: filepath };
+}
+
 module.exports = {
   importFromExcel,
-  importFromBundle
+  importFromBundle,
+  generateImportTemplate
 };

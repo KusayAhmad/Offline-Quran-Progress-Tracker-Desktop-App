@@ -53,10 +53,17 @@ const AppRouter = {
       if (screen.attachEvents) {
         screen.attachEvents();
       }
+
+      // Re-apply language/direction from cached settings to prevent flash of wrong direction
+      if (this.settings) {
+        const lang = this.settings.language || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
     }
   },
 
-  init() {
+  async init() {
     // Setup navigation click handlers
     document.querySelectorAll('.nav-item').forEach(item => {
       item.addEventListener('click', (e) => {
@@ -68,8 +75,27 @@ const AppRouter = {
       });
     });
 
+    // Apply stored language settings before first navigation to prevent direction flash
+    await this.applyStoredLanguage();
+
     // Render initial screen
     this.navigate('dashboard');
+  },
+
+  async applyStoredLanguage() {
+    try {
+      const settings = await window.api.getSettings();
+      if (settings) {
+        this.settings = settings;
+        const lang = settings.language || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
+    } catch (err) {
+      // Fallback to Arabic if settings load fails
+      document.documentElement.lang = 'ar';
+      document.documentElement.dir = 'rtl';
+    }
   }
 };
 
