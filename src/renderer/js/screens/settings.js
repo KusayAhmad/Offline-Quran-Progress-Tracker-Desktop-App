@@ -107,14 +107,16 @@ const SettingsScreen = {
     const container = document.getElementById('settings-result');
     if (!container) return;
     container.style.display = 'block';
+    container.innerHTML = '';
+    const p = document.createElement('p');
     if (result.success) {
       container.className = 'settings-result settings-result-success';
-      const msg = language === 'en' ? 'Settings saved successfully' : '\u062a\u0645 \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0628\u0646\u062c\u0627\u062d';
-      container.innerHTML = `<p>${msg}</p>`;
+      p.textContent = language === 'en' ? 'Settings saved successfully' : '\u062a\u0645 \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0628\u0646\u062c\u0627\u062d';
     } else {
       container.className = 'settings-result settings-result-error';
-      container.innerHTML = `<p>${result.message || '\u062e\u0637\u0623 \u0641\u064a \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'}</p>`;
+      p.textContent = result.message || '\u062e\u0637\u0623 \u0641\u064a \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a';
     }
+    container.appendChild(p);
     setTimeout(() => { container.style.display = 'none'; }, 3000);
   }
 };

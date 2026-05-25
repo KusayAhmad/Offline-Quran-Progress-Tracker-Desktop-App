@@ -145,31 +145,22 @@ function getLevelReport(db, levelId) {
 
   const totalSurahs = surahs.length;
 
+  const scopeQuery = `
+    SELECT p.status, COUNT(*) as count
+    FROM progress p
+    INNER JOIN level_surahs ls ON p.surah_id = ls.surah_id
+    WHERE ls.level_id = ? AND p.student_id = ?
+    GROUP BY p.status
+  `;
+
   const studentSummaries = students.map(student => {
-    const progress = db.prepare(`
-      SELECT p.status, COUNT(*) as count
-      FROM progress p
-      INNER JOIN level_surahs ls ON p.surah_id = ls.surah_id
-      WHERE p.student_id = ? AND ls.level_id = ?
-      GROUP BY p.status
-    `).all(student.id, levelId);
-
-    const statusCounts = { NOT_STARTED: 0, IN_PROGRESS: 0, MEMORIZED: 0, REVIEW_REQUIRED: 0, WEAK: 0, PERFECT: 0 };
-    let tracked = 0;
-    progress.forEach(p => {
-      statusCounts[p.status] = p.count;
-      tracked += p.count;
-    });
-    statusCounts.NOT_STARTED = totalSurahs - tracked;
-
-    const memorizedTotal = statusCounts.MEMORIZED + statusCounts.PERFECT;
-    const progressPercentage = totalSurahs > 0 ? Math.round((memorizedTotal / totalSurahs) * 100) : 0;
+    const summary = buildStudentSummary(db, student.id, scopeQuery, [levelId], totalSurahs);
 
     return {
       ...student,
-      statusCounts,
-      progressPercentage,
-      memorizedTotal
+      statusCounts: summary.statusCounts,
+      progressPercentage: summary.progressPercentage,
+      memorizedTotal: summary.memorizedTotal
     };
   });
 
