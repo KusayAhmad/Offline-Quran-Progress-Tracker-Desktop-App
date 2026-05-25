@@ -128,9 +128,9 @@ const ReportsScreen = {
 
     let basisText = '';
     if (data.calculationBasis === 'level') {
-      basisText = `<p class="report-calculation-basis">\u0646\u0633\u0628\u0629 \u0627\u0644\u0625\u0646\u062c\u0627\u0632 \u0645\u062d\u0633\u0648\u0628\u0629 \u0639\u0644\u0649 \u0623\u0633\u0627\u0633 ${data.totalSurahs} \u0633\u0648\u0631\u0629 \u0641\u064a \u0627\u0644\u0645\u0633\u062a\u0648\u0649 (${escapeHtml(data.levelName)})</p>`;
+      basisText = `<p class="report-calc-basis">\u0646\u0633\u0628\u0629 \u0627\u0644\u0625\u0646\u062c\u0627\u0632 \u0645\u062d\u0633\u0648\u0628\u0629 \u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u0627\u0644\u0633\u0648\u0631 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629 \u0648\u0627\u0644\u0645\u062a\u0642\u0646\u0629 \u0645\u0646 \u0625\u062c\u0645\u0627\u0644\u064a ${data.totalSurahs} \u0633\u0648\u0631\u0629 \u0641\u064a \u0627\u0644\u0645\u0633\u062a\u0648\u0649 (${escapeHtml(data.levelName)})</p>`;
     } else {
-      basisText = `<p class="report-calculation-basis">\u0646\u0633\u0628\u0629 \u0627\u0644\u0625\u0646\u062c\u0627\u0632 \u0645\u062d\u0633\u0648\u0628\u0629 \u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u0625\u062c\u0645\u0627\u0644\u064a 114 \u0633\u0648\u0631\u0629 \u0641\u064a \u0627\u0644\u0642\u0631\u0622\u0646 \u0627\u0644\u0643\u0631\u064a\u0645</p>`;
+      basisText = `<p class="report-calc-basis">\u0646\u0633\u0628\u0629 \u0627\u0644\u0625\u0646\u062c\u0627\u0632 \u0645\u062d\u0633\u0648\u0628\u0629 \u0639\u0644\u0649 \u0623\u0633\u0627\u0633 \u0627\u0644\u0633\u0648\u0631 \u0627\u0644\u0645\u062d\u0641\u0648\u0638\u0629 \u0648\u0627\u0644\u0645\u062a\u0642\u0646\u0629 \u0645\u0646 \u0625\u062c\u0645\u0627\u0644\u064a 114 \u0633\u0648\u0631\u0629 \u0641\u064a \u0627\u0644\u0642\u0631\u0622\u0646 \u0627\u0644\u0643\u0631\u064a\u0645</p>`;
     }
 
     const rows = data.students.map(s => `
@@ -196,6 +196,17 @@ const ReportsScreen = {
     if (!data || !data.entries || data.entries.length === 0) {
       return '<div class="empty-state"><p class="empty-state-text">\u0644\u0627 \u064a\u0648\u062c\u062f \u0637\u0644\u0627\u0628 \u0636\u0639\u0641\u0627\u0621</p></div>';
     }
+
+    const statusLegend = `
+      <div class="report-status-legend">
+        <span class="legend-title">\u062f\u0644\u064a\u0644 \u0627\u0644\u062d\u0627\u0644\u0627\u062a:</span>
+        <span class="legend-item status-weak"><span class="status-icon">&#x26A0;</span> \u0636\u0639\u064a\u0641</span>
+        <span class="legend-item status-review-required"><span class="status-icon">&#x1F504;</span> \u064a\u062d\u062a\u0627\u062c \u0645\u0631\u0627\u062c\u0639\u0629</span>
+        <span class="legend-item status-memorized"><span class="status-icon">&#x2713;</span> \u062a\u0645 \u0627\u0644\u062d\u0641\u0638</span>
+        <span class="legend-item status-perfect"><span class="status-icon">&#x2605;</span> \u0645\u062a\u0642\u0646</span>
+      </div>
+    `;
+
     const rows = data.entries.map(e => `
       <tr>
         <td>${escapeHtml(e.student_name)}</td>
@@ -207,6 +218,7 @@ const ReportsScreen = {
     return `
       <div class="report-section">
         <h3 class="report-section-title">\u0627\u0644\u0637\u0644\u0627\u0628 \u0627\u0644\u0636\u0639\u0641\u0627\u0621 (${data.studentCount} \u0637\u0627\u0644\u0628 - ${data.totalEntries} \u0633\u0648\u0631\u0629)</h3>
+        ${statusLegend}
         <table class="report-table">
           <thead><tr><th>\u0627\u0644\u0637\u0627\u0644\u0628</th><th>\u0627\u0644\u0633\u0648\u0631\u0629</th><th>\u0627\u0644\u0645\u0633\u062a\u0648\u0649</th></tr></thead>
           <tbody>${rows}</tbody>
@@ -219,6 +231,17 @@ const ReportsScreen = {
     if (!data || !data.entries || data.entries.length === 0) {
       return '<div class="empty-state"><p class="empty-state-text">\u0644\u0627 \u064a\u0648\u062c\u062f \u0637\u0644\u0627\u0628 \u064a\u062d\u062a\u0627\u062c\u0648\u0646 \u0645\u0631\u0627\u062c\u0639\u0629</p></div>';
     }
+
+    const statusLegend = `
+      <div class="report-status-legend">
+        <span class="legend-title">\u062f\u0644\u064a\u0644 \u0627\u0644\u062d\u0627\u0644\u0627\u062a:</span>
+        <span class="legend-item status-weak"><span class="status-icon">&#x26A0;</span> \u0636\u0639\u064a\u0641</span>
+        <span class="legend-item status-review-required"><span class="status-icon">&#x1F504;</span> \u064a\u062d\u062a\u0627\u062c \u0645\u0631\u0627\u062c\u0639\u0629</span>
+        <span class="legend-item status-memorized"><span class="status-icon">&#x2713;</span> \u062a\u0645 \u0627\u0644\u062d\u0641\u0638</span>
+        <span class="legend-item status-perfect"><span class="status-icon">&#x2605;</span> \u0645\u062a\u0642\u0646</span>
+      </div>
+    `;
+
     const rows = data.entries.map(e => `
       <tr>
         <td>${escapeHtml(e.student_name)}</td>
@@ -230,6 +253,7 @@ const ReportsScreen = {
     return `
       <div class="report-section">
         <h3 class="report-section-title">\u064a\u062d\u062a\u0627\u062c \u0645\u0631\u0627\u062c\u0639\u0629 (${data.studentCount} \u0637\u0627\u0644\u0628 - ${data.totalEntries} \u0633\u0648\u0631\u0629)</h3>
+        ${statusLegend}
         <table class="report-table">
           <thead><tr><th>\u0627\u0644\u0637\u0627\u0644\u0628</th><th>\u0627\u0644\u0633\u0648\u0631\u0629</th><th>\u0627\u0644\u0645\u0633\u062a\u0648\u0649</th></tr></thead>
           <tbody>${rows}</tbody>

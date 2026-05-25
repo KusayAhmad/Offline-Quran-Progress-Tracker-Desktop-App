@@ -53,6 +53,13 @@ const AppRouter = {
       if (screen.attachEvents) {
         screen.attachEvents();
       }
+
+      // Re-apply language/direction from cached settings to prevent flash of wrong direction
+      if (this.settings) {
+        const lang = this.settings.language || 'ar';
+        document.documentElement.lang = lang;
+        document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+      }
     }
   },
 

@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "feat",
   "description": "UI/UX refinements: keep status legend always visible, make matrix rows more spacious, ensure consistent status badges across all screens, and preserve user settings across navigation.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Step 1: Update src/renderer/css/progress-matrix.css - Make .matrix-status-legend sticky with position: sticky; top: 0; z-index: 15; background: white. Add more padding to .matrix-data-cell (from 4px to 8px) and increase .matrix-name-cell min-height. Add a subtle bottom border on the legend.",
     "Step 2: Update src/renderer/js/screens/reports.js - Add the status legend (using the same StatusLegend component pattern) at the top of the weak report and review report sections so users can see what the statuses mean.",

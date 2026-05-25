@@ -88,23 +88,32 @@ const SettingsScreen = {
         const lang = data.language || 'ar';
         document.documentElement.lang = lang;
         document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+        // Update cached settings in AppRouter
+        if (window.AppRouter && window.AppRouter.settings) {
+          window.AppRouter.settings.language = data.language;
+          window.AppRouter.settings.teacher_name = data.teacher_name;
+          window.AppRouter.settings.school_name = data.school_name;
+          window.AppRouter.settings.class_name = data.class_name;
+        }
       }
-      this.showResult(result);
+      this.showResult(result, data.language);
     } catch (err) {
       this.showResult({ success: false, message: err.message });
     }
   },
 
-  showResult(result) {
+  showResult(result, language) {
     const container = document.getElementById('settings-result');
     if (!container) return;
     container.style.display = 'block';
     if (result.success) {
       container.className = 'settings-result settings-result-success';
-      container.innerHTML = '<p>تم حفظ الإعدادات بنجاح</p>';
+      const msg = language === 'en' ? 'Settings saved successfully' : '\u062a\u0645 \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a \u0628\u0646\u062c\u0627\u062d';
+      container.innerHTML = `<p>${msg}</p>`;
     } else {
       container.className = 'settings-result settings-result-error';
-      container.innerHTML = `<p>${result.message || 'خطأ في حفظ الإعدادات'}</p>`;
+      container.innerHTML = `<p>${result.message || '\u062e\u0637\u0623 \u0641\u064a \u062d\u0641\u0638 \u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'}</p>`;
     }
     setTimeout(() => { container.style.display = 'none'; }, 3000);
   }
