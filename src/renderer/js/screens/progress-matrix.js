@@ -71,7 +71,7 @@ const ProgressMatrixScreen = {
           <label class="matrix-control-label">اختر الطالب:</label>
           <select id="matrix-student-select" class="matrix-select">
             <option value="">-- اختر طالب --</option>
-            ${students.map(s => `<option value="${s.id}" ${s.id === this.selectedStudentId ? 'selected' : ''}>${s.name_ar}</option>`).join('')}
+            ${students.map(s => `<option value="${s.id}" ${s.id === this.selectedStudentId ? 'selected' : ''}>${escapeHtml(s.name_ar)}</option>`).join('')}
           </select>
         </div>
       `;
@@ -86,7 +86,7 @@ const ProgressMatrixScreen = {
           <label class="matrix-control-label">اختر السورة:</label>
           <select id="matrix-surah-select" class="matrix-select">
             <option value="">-- اختر سورة --</option>
-            ${surahs.map(s => `<option value="${s.id}" ${s.id === this.selectedSurahId ? 'selected' : ''}>${s.name_ar}</option>`).join('')}
+            ${surahs.map(s => `<option value="${s.id}" ${s.id === this.selectedSurahId ? 'selected' : ''}>${escapeHtml(s.name_ar)}</option>`).join('')}
           </select>
         </div>
       `;
@@ -101,7 +101,7 @@ const ProgressMatrixScreen = {
           <label class="matrix-control-label">اختر المستوى:</label>
           <select id="matrix-level-select" class="matrix-select">
             <option value="">-- اختر مستوى --</option>
-            ${levels.map(l => `<option value="${l.id}" ${l.id === this.selectedLevelId ? 'selected' : ''}>${l.name_ar}</option>`).join('')}
+            ${levels.map(l => `<option value="${l.id}" ${l.id === this.selectedLevelId ? 'selected' : ''}>${escapeHtml(l.name_ar)}</option>`).join('')}
           </select>
         </div>
       `;
@@ -148,7 +148,7 @@ const ProgressMatrixScreen = {
 
     let html = `
       <div class="matrix-student-header">
-        <h3>${student.name_ar}</h3>
+        <h3>${escapeHtml(student.name_ar)}</h3>
         <span class="matrix-progress-badge">${progressPercentage}% مكتمل</span>
       </div>
       <div class="matrix-student-grid">
@@ -181,7 +181,7 @@ const ProgressMatrixScreen = {
 
     let html = `
       <div class="matrix-surah-header">
-        <h3>${surah.name_ar}</h3>
+        <h3>${escapeHtml(surah.name_ar)}</h3>
       </div>
       <div class="matrix-surah-list">
     `;
@@ -191,7 +191,7 @@ const ProgressMatrixScreen = {
       const status = entry ? entry.status : 'NOT_STARTED';
       html += `
         <div class="matrix-surah-row">
-          <span class="matrix-row-name">${student.name_ar}</span>
+          <span class="matrix-row-name">${escapeHtml(student.name_ar)}</span>
           ${this.renderCellHtml(student.id, surah.id, status)}
         </div>
       `;
@@ -252,14 +252,14 @@ const ProgressMatrixScreen = {
     // Header row
     html += '<thead><tr><th class="matrix-corner-cell">الطالب / السورة</th>';
     for (const surah of surahs) {
-      html += `<th class="matrix-header-cell">${surah.name_ar}</th>`;
+      html += `<th class="matrix-header-cell">${escapeHtml(surah.name_ar)}</th>`;
     }
     html += '</tr></thead>';
 
     // Body rows
     html += '<tbody>';
     for (const student of students) {
-      html += `<tr><td class="matrix-name-cell">${student.name_ar}</td>`;
+      html += `<tr><td class="matrix-name-cell">${escapeHtml(student.name_ar)}</td>`;
       for (const surah of surahs) {
         const key = `${student.id}_${surah.id}`;
         const entry = progressMap[key];
@@ -287,7 +287,7 @@ const ProgressMatrixScreen = {
 
     let html = `<div class="progress-cell" data-student-id="${studentId}" data-surah-id="${surahId}" data-status="${status}">`;
     if (label) {
-      html += `<span class="progress-cell-label">${label}</span>`;
+      html += `<span class="progress-cell-label">${escapeHtml(label)}</span>`;
     }
     html += `<span class="progress-cell-badge ${info.cssClass}"><span class="status-icon">${info.icon}</span></span>`;
     html += '<div class="progress-cell-dropdown hidden">';

@@ -7,14 +7,14 @@ const fs = require('fs');
 const path = require('path');
 
 /**
- * Create a backup of the database file.
- * @param {string} dbPath - Path to the current database file
+ * Create a backup of the database using better-sqlite3's backup API.
+ * @param {object} db - The better-sqlite3 database instance
  * @param {string} targetDir - Directory to store the backup
- * @returns {object} - Result with backup file path
+ * @returns {Promise<object>} - Result with backup file path
  */
-function createBackup(dbPath, targetDir) {
-  if (!fs.existsSync(dbPath)) {
-    return { success: false, error: 'Database file not found' };
+async function createBackup(db, targetDir) {
+  if (!db) {
+    return { success: false, error: 'Database instance not provided' };
   }
 
   if (!fs.existsSync(targetDir)) {
@@ -26,7 +26,7 @@ function createBackup(dbPath, targetDir) {
   const backupName = `quran-tracker-backup-${timestamp}-${random}.db`;
   const backupPath = path.join(targetDir, backupName);
 
-  fs.copyFileSync(dbPath, backupPath);
+  await db.backup(backupPath);
 
   return {
     success: true,
@@ -86,12 +86,12 @@ function getBackupList(backupDir) {
 
 /**
  * Auto-backup function - creates a backup on app close.
- * @param {string} dbPath - Path to the current database file
+ * @param {object} db - The better-sqlite3 database instance
  * @param {string} backupDir - Directory to store backups
- * @returns {object} - Result
+ * @returns {Promise<object>} - Result
  */
-function autoBackup(dbPath, backupDir) {
-  return createBackup(dbPath, backupDir);
+async function autoBackup(db, backupDir) {
+  return createBackup(db, backupDir);
 }
 
 module.exports = {

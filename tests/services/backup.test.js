@@ -13,21 +13,24 @@ const backupService = require('../../src/services/backup');
 
 let tmpDir;
 let dbPath;
+let db;
 
 beforeEach(() => {
   tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'quran-backup-test-'));
   dbPath = path.join(tmpDir, 'test.db');
 
   // Create a real database file
-  const db = new Database(dbPath);
+  db = new Database(dbPath);
   db.pragma('foreign_keys = ON');
   createSchema(db);
   seedDatabase(db);
   db.prepare('INSERT INTO students (name_ar) VALUES (?)').run('طالب اختبار');
-  db.close();
 });
 
 afterEach(() => {
+  if (db) {
+    try { db.close(); } catch (e) { /* already closed */ }
+  }
   if (tmpDir && fs.existsSync(tmpDir)) {
     fs.rmSync(tmpDir, { recursive: true });
   }
@@ -35,9 +38,9 @@ afterEach(() => {
 
 describe('Backup Service', () => {
   describe('createBackup', () => {
-    test('creates a backup file', () => {
+    test('creates a backup file', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      const result = backupService.createBackup(dbPath, backupDir);
+      const result = await backupService.createBackup(db, backupDir);
 
       expect(result.success).toBe(true);
       expect(result.path).toBeDefined();
@@ -45,35 +48,37 @@ describe('Backup Service', () => {
       expect(fs.existsSync(result.path)).toBe(true);
     });
 
-    test('backup file contains same data', () => {
+    test('backup file contains same data', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      const result = backupService.createBackup(dbPath, backupDir);
+      const result = await backupService.createBackup(db, backupDir);
 
-      const originalSize = fs.statSync(dbPath).size;
-      const backupSize = fs.statSync(result.path).size;
-      expect(backupSize).toBe(originalSize);
+      // Verify backup is a valid database with the same student
+      const backupDb = new Database(result.path);
+      const student = backupDb.prepare('SELECT * FROM students WHERE name_ar = ?').get('طالب اختبار');
+      expect(student).toBeDefined();
+      backupDb.close();
     });
 
-    test('creates backup directory if it does not exist', () => {
+    test('creates backup directory if it does not exist', async () => {
       const backupDir = path.join(tmpDir, 'new-backups-dir');
       expect(fs.existsSync(backupDir)).toBe(false);
 
-      const result = backupService.createBackup(dbPath, backupDir);
+      const result = await backupService.createBackup(db, backupDir);
       expect(result.success).toBe(true);
       expect(fs.existsSync(backupDir)).toBe(true);
     });
 
-    test('returns error when DB file not found', () => {
+    test('returns error when db is not provided', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      const result = backupService.createBackup('/nonexistent/path.db', backupDir);
+      const result = await backupService.createBackup(null, backupDir);
       expect(result.success).toBe(false);
-      expect(result.error).toBe('Database file not found');
+      expect(result.error).toBe('Database instance not provided');
     });
 
-    test('creates multiple backups with unique names', () => {
+    test('creates multiple backups with unique names', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      const result1 = backupService.createBackup(dbPath, backupDir);
-      const result2 = backupService.createBackup(dbPath, backupDir);
+      const result1 = await backupService.createBackup(db, backupDir);
+      const result2 = await backupService.createBackup(db, backupDir);
 
       expect(result1.success).toBe(true);
       expect(result2.success).toBe(true);
@@ -85,12 +90,11 @@ describe('Backup Service', () => {
   });
 
   describe('restoreBackup', () => {
-    test('restores a backup file', () => {
+    test('restores a backup file', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      const backup = backupService.createBackup(dbPath, backupDir);
+      const backup = await backupService.createBackup(db, backupDir);
 
       // Modify the original DB
-      const db = new Database(dbPath);
       db.prepare('INSERT INTO students (name_ar) VALUES (?)').run('طالب جديد');
       const countAfterModify = db.prepare('SELECT COUNT(*) as count FROM students').get().count;
       db.close();
@@ -105,6 +109,9 @@ describe('Backup Service', () => {
       db2.close();
 
       expect(countAfterRestore).toBeLessThan(countAfterModify);
+
+      // Reopen for afterEach cleanup
+      db = new Database(dbPath);
     });
 
     test('returns error when backup file not found', () => {
@@ -121,10 +128,10 @@ describe('Backup Service', () => {
       expect(list).toEqual([]);
     });
 
-    test('returns list of backup files', () => {
+    test('returns list of backup files', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      backupService.createBackup(dbPath, backupDir);
-      backupService.createBackup(dbPath, backupDir);
+      await backupService.createBackup(db, backupDir);
+      await backupService.createBackup(db, backupDir);
 
       const list = backupService.getBackupList(backupDir);
       expect(list.length).toBe(2);
@@ -133,10 +140,10 @@ describe('Backup Service', () => {
       expect(list[0].created).toBeDefined();
     });
 
-    test('returns backups sorted by date (newest first)', () => {
+    test('returns backups sorted by date (newest first)', async () => {
       const backupDir = path.join(tmpDir, 'backups');
-      backupService.createBackup(dbPath, backupDir);
-      backupService.createBackup(dbPath, backupDir);
+      await backupService.createBackup(db, backupDir);
+      await backupService.createBackup(db, backupDir);
 
       const list = backupService.getBackupList(backupDir);
       if (list.length >= 2) {
@@ -148,9 +155,9 @@ describe('Backup Service', () => {
   });
 
   describe('autoBackup', () => {
-    test('creates a backup using autoBackup', () => {
+    test('creates a backup using autoBackup', async () => {
       const backupDir = path.join(tmpDir, 'auto-backups');
-      const result = backupService.autoBackup(dbPath, backupDir);
+      const result = await backupService.autoBackup(db, backupDir);
 
       expect(result.success).toBe(true);
       expect(fs.existsSync(result.path)).toBe(true);

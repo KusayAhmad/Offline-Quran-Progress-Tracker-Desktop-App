@@ -25,7 +25,7 @@ const SurahsScreen = {
       <div class="surahs-toolbar">
         <select class="form-select" id="surahs-filter-level">
           <option value="">جميع المستويات</option>
-          ${this.levels.map(l => `<option value="${l.id}">${l.name_ar}</option>`).join('')}
+          ${this.levels.map(l => `<option value="${l.id}">${escapeHtml(l.name_ar)}</option>`).join('')}
           <option value="none">بدون مستوى</option>
         </select>
       </div>
@@ -55,13 +55,13 @@ const SurahsScreen = {
       html += `
         <tr>
           <td>${surah.surah_no}</td>
-          <td><strong>${surah.name_ar}</strong></td>
-          <td>${surah.name_en}</td>
-          <td>${surah.level_name || '<span class="text-muted">غير مخصصة</span>'}</td>
+          <td><strong>${escapeHtml(surah.name_ar)}</strong></td>
+          <td>${escapeHtml(surah.name_en)}</td>
+          <td>${surah.level_name ? escapeHtml(surah.level_name) : '<span class="text-muted">غير مخصصة</span>'}</td>
           <td>
             <select class="form-select form-select-sm" data-action="change-level" data-surah-id="${surah.id}">
               <option value="">بدون مستوى</option>
-              ${this.levels.map(l => `<option value="${l.id}" ${surah.level_id == l.id ? 'selected' : ''}>${l.name_ar}</option>`).join('')}
+              ${this.levels.map(l => `<option value="${l.id}" ${surah.level_id == l.id ? 'selected' : ''}>${escapeHtml(l.name_ar)}</option>`).join('')}
             </select>
           </td>
         </tr>

@@ -10,6 +10,7 @@ const StudentProfileScreen = {
   notes: [],
   levels: [],
   surahs: [],
+  totalSurahs: 114,
 
   async render(params) {
     this.studentId = params && params.studentId;
@@ -30,6 +31,14 @@ const StudentProfileScreen = {
       this.notes = await window.api.getStudentNotes(this.studentId);
       this.levels = await window.api.getLevels();
       this.surahs = await window.api.getSurahs();
+
+      // Get level-scoped stats for correct total surah count
+      const stats = await window.api.getProgressStats(this.studentId);
+      if (stats) {
+        this.totalSurahs = stats.totalSurahs;
+      } else {
+        this.totalSurahs = 114;
+      }
     } catch (e) {
       console.error('Failed to load student profile:', e);
     }
@@ -49,8 +58,8 @@ const StudentProfileScreen = {
     return `
       <div class="screen-header">
         <button class="btn btn-secondary btn-sm" id="btn-back-students">&#x2190; العودة للطلاب</button>
-        <h2 class="screen-title">${this.student.name_ar}</h2>
-        <p class="screen-subtitle">${this.student.name_en || ''}</p>
+        <h2 class="screen-title">${escapeHtml(this.student.name_ar)}</h2>
+        <p class="screen-subtitle">${escapeHtml(this.student.name_en || '')}</p>
       </div>
 
       <div class="profile-layout">
@@ -62,7 +71,7 @@ const StudentProfileScreen = {
             <div class="profile-info-grid">
               <div class="profile-info-item">
                 <span class="profile-info-label">المستوى</span>
-                <span class="profile-info-value">${this.student.level_name || 'غير محدد'}</span>
+                <span class="profile-info-value">${escapeHtml(this.student.level_name || 'غير محدد')}</span>
               </div>
               <div class="profile-info-item">
                 <span class="profile-info-label">تاريخ التسجيل</span>
@@ -70,7 +79,7 @@ const StudentProfileScreen = {
               </div>
               <div class="profile-info-item">
                 <span class="profile-info-label">ملاحظات</span>
-                <span class="profile-info-value">${this.student.notes || 'لا توجد ملاحظات'}</span>
+                <span class="profile-info-value">${escapeHtml(this.student.notes || 'لا توجد ملاحظات')}</span>
               </div>
             </div>
           </div>
@@ -148,14 +157,15 @@ const StudentProfileScreen = {
     });
 
     const totalTracked = Object.values(counts).reduce((a, b) => a + b, 0);
-    counts.NOT_STARTED = Math.max(0, 114 - totalTracked);
+    counts.NOT_STARTED = Math.max(0, this.totalSurahs - totalTracked);
 
     return counts;
   },
 
   _calculateProgress(counts) {
     const memorized = (counts.MEMORIZED || 0) + (counts.PERFECT || 0);
-    return Math.round((memorized / 114) * 100);
+    const total = this.totalSurahs || 114;
+    return total > 0 ? Math.round((memorized / total) * 100) : 0;
   },
 
   _renderProgressStats(counts) {
@@ -187,7 +197,7 @@ const StudentProfileScreen = {
       html += `
         <div class="surah-progress-item">
           <span class="surah-progress-no">${surah.surah_no}</span>
-          <span class="surah-progress-name">${surah.name_ar}</span>
+          <span class="surah-progress-name">${escapeHtml(surah.name_ar)}</span>
           ${StatusBadge.render(status)}
         </div>
       `;
@@ -203,7 +213,7 @@ const StudentProfileScreen = {
 
     return this.notes.map(note => `
       <div class="note-item">
-        <div class="note-content">${note.content}</div>
+        <div class="note-content">${escapeHtml(note.content)}</div>
         <div class="note-footer">
           <span class="note-date">${note.created_at ? new Date(note.created_at).toLocaleDateString('ar-SA') : ''}</span>
           <button class="btn btn-sm btn-danger" data-action="delete-note" data-note-id="${note.id}">حذف</button>
@@ -225,7 +235,7 @@ const StudentProfileScreen = {
       const surah = this.surahs.find(s => s.id === p.surah_id);
       return `
         <div class="history-item">
-          <span class="history-surah">${surah ? surah.name_ar : ''}</span>
+          <span class="history-surah">${surah ? escapeHtml(surah.name_ar) : ''}</span>
           ${StatusBadge.render(p.status)}
           <span class="history-date">${p.last_reviewed ? new Date(p.last_reviewed).toLocaleDateString('ar-SA') : ''}</span>
         </div>

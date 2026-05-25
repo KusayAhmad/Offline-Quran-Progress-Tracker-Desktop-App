@@ -61,8 +61,8 @@ const LevelsScreen = {
           <div class="level-card-header">
             <div class="level-card-order">${level.sort_order}</div>
             <div class="level-card-info">
-              <div class="level-card-name">${level.name_ar}</div>
-              ${level.description ? `<div class="level-card-desc text-muted">${level.description}</div>` : ''}
+              <div class="level-card-name">${escapeHtml(level.name_ar)}</div>
+              ${level.description ? `<div class="level-card-desc text-muted">${escapeHtml(level.description)}</div>` : ''}
             </div>
           </div>
           <div class="level-card-actions">
@@ -103,7 +103,7 @@ const LevelsScreen = {
       levelSurahs.forEach(s => {
         html += `
           <div class="surah-chip">
-            <span>${s.name_ar}</span>
+            <span>${escapeHtml(s.name_ar)}</span>
             <button class="surah-chip-remove" data-action="remove-surah" data-surah-id="${s.id}" data-level-id="${levelId}">&times;</button>
           </div>
         `;
@@ -117,7 +117,7 @@ const LevelsScreen = {
           <h4>السور المتاحة</h4>
           <select class="form-select" id="available-surahs-select">
             <option value="">اختر سورة لإضافتها...</option>
-            ${availableSurahs.map(s => `<option value="${s.id}">${s.surah_no}. ${s.name_ar}</option>`).join('')}
+            ${availableSurahs.map(s => `<option value="${s.id}">${s.surah_no}. ${escapeHtml(s.name_ar)}</option>`).join('')}
           </select>
           <button class="btn btn-sm btn-primary mt-md" id="btn-add-surah-to-level">إضافة</button>
         </div>
@@ -244,15 +244,15 @@ const LevelsScreen = {
     const body = `
       <div class="form-group">
         <label class="form-label" for="level-name-ar">اسم المستوى (عربي) *</label>
-        <input type="text" class="form-input" id="level-name-ar" value="${level.name_ar}" required />
+        <input type="text" class="form-input" id="level-name-ar" value="${escapeHtml(level.name_ar)}" required />
       </div>
       <div class="form-group">
         <label class="form-label" for="level-name-en">اسم المستوى (إنجليزي)</label>
-        <input type="text" class="form-input" id="level-name-en" value="${level.name_en || ''}" />
+        <input type="text" class="form-input" id="level-name-en" value="${escapeHtml(level.name_en || '')}" />
       </div>
       <div class="form-group">
         <label class="form-label" for="level-description">الوصف</label>
-        <textarea class="form-textarea" id="level-description">${level.description || ''}</textarea>
+        <textarea class="form-textarea" id="level-description">${escapeHtml(level.description || '')}</textarea>
       </div>
     `;
     const actions = `
@@ -285,7 +285,7 @@ const LevelsScreen = {
 
     Modal.confirm({
       title: 'حذف المستوى',
-      message: `هل أنت متأكد من حذف المستوى "${level.name_ar}"؟ لا يمكن حذف مستوى به طلاب.`,
+      message: `هل أنت متأكد من حذف المستوى "${escapeHtml(level.name_ar)}"؟ لا يمكن حذف مستوى به طلاب.`,
       confirmText: 'حذف',
       cancelText: 'إلغاء',
       onConfirm: async () => {

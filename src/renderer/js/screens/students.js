@@ -35,7 +35,7 @@ const StudentsScreen = {
           <input type="text" class="form-input students-search" id="students-search" placeholder="بحث عن طالب..." />
           <select class="form-select students-filter" id="filter-level">
             <option value="">جميع المستويات</option>
-            ${this.levels.map(l => `<option value="${l.id}">${l.name_ar}</option>`).join('')}
+            ${this.levels.map(l => `<option value="${l.id}">${escapeHtml(l.name_ar)}</option>`).join('')}
           </select>
           <select class="form-select students-filter" id="filter-status">
             <option value="">جميع الحالات</option>
@@ -81,17 +81,17 @@ const StudentsScreen = {
     `;
 
     students.forEach(student => {
-      const levelName = student.level_name || 'غير محدد';
+      const levelName = escapeHtml(student.level_name || 'غير محدد');
       const createdDate = student.created_at ? new Date(student.created_at).toLocaleDateString('ar-SA') : '';
 
       html += `
         <tr class="clickable-row" data-student-id="${student.id}">
           <td class="student-name-cell">
-            <strong>${student.name_ar}</strong>
-            ${student.name_en ? `<small class="text-muted">${student.name_en}</small>` : ''}
+            <strong>${escapeHtml(student.name_ar)}</strong>
+            ${student.name_en ? `<small class="text-muted">${escapeHtml(student.name_en)}</small>` : ''}
           </td>
           <td><span class="level-chip">${levelName}</span></td>
-          <td class="notes-cell">${student.notes || ''}</td>
+          <td class="notes-cell">${escapeHtml(student.notes || '')}</td>
           <td>${createdDate}</td>
           <td class="actions-cell">
             <button class="btn btn-sm btn-secondary" data-action="edit" data-id="${student.id}">تعديل</button>
@@ -275,7 +275,7 @@ const StudentsScreen = {
 
     Modal.confirm({
       title: 'أرشفة طالب',
-      message: `هل أنت متأكد من أرشفة الطالب "${student.name_ar}"؟`,
+      message: `هل أنت متأكد من أرشفة الطالب "${escapeHtml(student.name_ar)}"؟`,
       confirmText: 'أرشفة',
       cancelText: 'إلغاء',
       onConfirm: async () => {
@@ -301,22 +301,22 @@ const StudentsScreen = {
     return `
       <div class="form-group">
         <label class="form-label" for="student-name-ar">اسم الطالب (عربي) *</label>
-        <input type="text" class="form-input" id="student-name-ar" value="${student.name_ar || ''}" required />
+        <input type="text" class="form-input" id="student-name-ar" value="${escapeHtml(student.name_ar || '')}" required />
       </div>
       <div class="form-group">
         <label class="form-label" for="student-name-en">اسم الطالب (إنجليزي)</label>
-        <input type="text" class="form-input" id="student-name-en" value="${student.name_en || ''}" />
+        <input type="text" class="form-input" id="student-name-en" value="${escapeHtml(student.name_en || '')}" />
       </div>
       <div class="form-group">
         <label class="form-label" for="student-level">المستوى</label>
         <select class="form-select" id="student-level">
           <option value="">بدون مستوى</option>
-          ${this.levels.map(l => `<option value="${l.id}" ${student.level_id == l.id ? 'selected' : ''}>${l.name_ar}</option>`).join('')}
+          ${this.levels.map(l => `<option value="${l.id}" ${student.level_id == l.id ? 'selected' : ''}>${escapeHtml(l.name_ar)}</option>`).join('')}
         </select>
       </div>
       <div class="form-group">
         <label class="form-label" for="student-notes">ملاحظات</label>
-        <textarea class="form-textarea" id="student-notes">${student.notes || ''}</textarea>
+        <textarea class="form-textarea" id="student-notes">${escapeHtml(student.notes || '')}</textarea>
       </div>
     `;
   }

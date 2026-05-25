@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 let mainWindow;
+let db;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -24,7 +25,7 @@ function createWindow() {
 
 app.whenReady().then(() => {
   const { initDatabase } = require('./src/db/database');
-  const db = initDatabase();
+  db = initDatabase();
 
   const stats = require('./src/services/stats');
   const studentsService = require('./src/services/students');
@@ -43,10 +44,22 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('addStudent', (event, student) => {
+    if (!student || typeof student !== 'object') {
+      return { success: false, error: 'Invalid student data' };
+    }
+    if (!student.name_ar || typeof student.name_ar !== 'string' || student.name_ar.trim() === '') {
+      return { success: false, error: 'Student name (name_ar) is required' };
+    }
     return studentsService.addStudent(db, student);
   });
 
   ipcMain.handle('updateStudent', (event, student) => {
+    if (!student || typeof student !== 'object') {
+      return { success: false, error: 'Invalid student data' };
+    }
+    if (!student.id || typeof student.id !== 'number') {
+      return { success: false, error: 'Student id is required and must be a number' };
+    }
     const { id, ...data } = student;
     return studentsService.updateStudent(db, id, data);
   });
@@ -133,6 +146,12 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('updateProgress', (event, progress) => {
+    if (!progress || typeof progress !== 'object') {
+      return { success: false, error: 'Invalid progress data' };
+    }
+    if (progress.student_id == null || progress.surah_id == null || !progress.status) {
+      return { success: false, error: 'student_id, surah_id, and status are required' };
+    }
     return progressService.updateProgress(db, progress.student_id, progress.surah_id, { status: progress.status });
   });
 
@@ -323,11 +342,11 @@ app.whenReady().then(() => {
         properties: ['openDirectory']
       });
       if (result.canceled) {
-        return backupService.createBackup(dbPath, backupDir);
+        return await backupService.createBackup(db, backupDir);
       }
-      return backupService.createBackup(dbPath, result.filePaths[0]);
+      return await backupService.createBackup(db, result.filePaths[0]);
     } catch (e) {
-      return backupService.createBackup(dbPath, backupDir);
+      return await backupService.createBackup(db, backupDir);
     }
   });
 
@@ -338,8 +357,27 @@ app.whenReady().then(() => {
         properties: ['openFile']
       });
       if (result.canceled) return { success: false, message: 'Canceled' };
-      return backupService.restoreBackup(result.filePaths[0], dbPath);
+
+      // Close the current database connection before restoring
+      db.close();
+
+      const restoreResult = backupService.restoreBackup(result.filePaths[0], dbPath);
+
+      // Reopen the database connection
+      const { initDatabase, closeDatabase } = require('./src/db/database');
+      closeDatabase(); // Reset the module-level singleton
+      db = initDatabase(dbPath);
+
+      return restoreResult;
     } catch (e) {
+      // If restore failed, try to reopen the database
+      try {
+        const { initDatabase, closeDatabase } = require('./src/db/database');
+        closeDatabase();
+        db = initDatabase(dbPath);
+      } catch (reopenErr) {
+        // Critical failure
+      }
       return { success: false, message: e.message };
     }
   });
@@ -353,20 +391,17 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('before-quit', () => {
+app.on('before-quit', async () => {
   try {
     const backupService = require('./src/services/backup');
-    let dbPathForBackup;
     let backupDirForBackup;
     try {
-      dbPathForBackup = path.join(app.getPath('userData'), 'quran-tracker.db');
       backupDirForBackup = path.join(app.getPath('userData'), 'backups');
     } catch (e) {
-      dbPathForBackup = path.join(__dirname, 'quran-tracker.db');
       backupDirForBackup = path.join(__dirname, 'backups');
     }
-    if (fs.existsSync(dbPathForBackup)) {
-      backupService.autoBackup(dbPathForBackup, backupDirForBackup);
+    if (db) {
+      await backupService.autoBackup(db, backupDirForBackup);
     }
   } catch (e) {
     // Auto-backup failure should not prevent app from closing

@@ -1,0 +1,27 @@
+{
+  "id": "FEAT-005",
+  "type": "fix",
+  "description": "Address code review findings: XSS escaping, transactional imports, backup API, restore with db reopen, student profile level-scoped progress, and IPC input validation.",
+  "status": "in_progress",
+  "steps": [
+    "Create src/renderer/js/utils/escape-html.js with escapeHtml utility",
+    "Apply escapeHtml in all renderer screens where user data is interpolated",
+    "Include escape-html.js script in index.html before screen scripts",
+    "Wrap replace-mode import operations in db.transaction() in src/services/import.js",
+    "Change backup service to use db.backup() API instead of fs.copyFileSync",
+    "Fix restore IPC handler to close db, copy file, then reopen",
+    "Fix student profile progress calculation to use level surah count",
+    "Add basic IPC input validation for critical handlers in main.js"
+  ],
+  "acceptance_criteria": [
+    "npm test passes after all changes",
+    "escapeHtml utility correctly escapes <, >, &, \", ' characters",
+    "Replace-mode imports are atomic (wrapped in transaction)",
+    "Backup uses better-sqlite3 backup API",
+    "Restore closes and reopens the db connection",
+    "Student profile uses correct total surah count based on level",
+    "Critical IPC handlers validate input and return error objects for invalid input"
+  ],
+  "blocked_reason": null,
+  "findings": null
+}

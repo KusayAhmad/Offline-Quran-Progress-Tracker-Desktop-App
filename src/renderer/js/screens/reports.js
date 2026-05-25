@@ -82,8 +82,8 @@ const ReportsScreen = {
     if (!data || !data.students) return '<div class="empty-state"><p>لا توجد بيانات</p></div>';
     const rows = data.students.map(s => `
       <tr>
-        <td>${s.name_ar}</td>
-        <td>${s.level_name || '-'}</td>
+        <td>${escapeHtml(s.name_ar)}</td>
+        <td>${escapeHtml(s.level_name || '-')}</td>
         <td>${s.progressPercentage}%</td>
         <td>${s.memorizedTotal}</td>
       </tr>
@@ -106,9 +106,9 @@ const ReportsScreen = {
     }
     const rows = data.entries.map(e => `
       <tr>
-        <td>${e.student_name}</td>
-        <td>${e.surah_name}</td>
-        <td>${e.level_name || '-'}</td>
+        <td>${escapeHtml(e.student_name)}</td>
+        <td>${escapeHtml(e.surah_name)}</td>
+        <td>${escapeHtml(e.level_name || '-')}</td>
       </tr>
     `).join('');
 
@@ -129,9 +129,9 @@ const ReportsScreen = {
     }
     const rows = data.entries.map(e => `
       <tr>
-        <td>${e.student_name}</td>
-        <td>${e.surah_name}</td>
-        <td>${e.level_name || '-'}</td>
+        <td>${escapeHtml(e.student_name)}</td>
+        <td>${escapeHtml(e.surah_name)}</td>
+        <td>${escapeHtml(e.level_name || '-')}</td>
       </tr>
     `).join('');
 
