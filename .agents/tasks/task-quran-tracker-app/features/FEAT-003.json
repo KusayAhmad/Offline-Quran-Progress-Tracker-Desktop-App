@@ -2,7 +2,7 @@
   "id": "FEAT-003",
   "type": "feat",
   "description": "Quran Progress Matrix - the main productivity screen with multiple views (Student View, Surah View, Level View, Color Grid View). Interactive grid for tracking and updating progress per student per surah with sticky headers, status chips, and smooth scrolling.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create src/services/progress.js - Progress service: getProgressMatrix(filters), getStudentProgress(student_id), getSurahProgress(surah_id), getLevelProgress(level_id), updateProgress(student_id, surah_id, {status, score, notes}), bulkUpdateProgress(updates[]), getProgressStats(student_id).",
     "Create src/renderer/js/screens/progress-matrix.js - Progress Matrix screen with view switcher tabs: Student View, Surah View, Level View, Color Grid View. Each view fetches appropriate data and renders the matrix.",

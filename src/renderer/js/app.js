@@ -13,7 +13,7 @@ const AppRouter = {
     levels: LevelsScreen,
     surahs: SurahsScreen,
     'student-profile': StudentProfileScreen,
-    'progress-matrix': { render: () => '<div class="screen-header"><h2 class="screen-title">مصفوفة التقدم</h2><p class="screen-subtitle">متابعة تقدم الطلاب</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4CB;</div><p class="empty-state-text">قريبا - مصفوفة التقدم</p></div>' },
+    'progress-matrix': ProgressMatrixScreen,
     reports: { render: () => '<div class="screen-header"><h2 class="screen-title">التقارير</h2><p class="screen-subtitle">تقارير وإحصائيات</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4C8;</div><p class="empty-state-text">قريبا - شاشة التقارير</p></div>' },
     'import-export': { render: () => '<div class="screen-header"><h2 class="screen-title">استيراد / تصدير</h2><p class="screen-subtitle">استيراد وتصدير البيانات</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4E5;</div><p class="empty-state-text">قريبا - شاشة الاستيراد والتصدير</p></div>' },
     backup: { render: () => '<div class="screen-header"><h2 class="screen-title">النسخ الاحتياطي</h2><p class="screen-subtitle">إدارة النسخ الاحتياطية</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4BE;</div><p class="empty-state-text">قريبا - شاشة النسخ الاحتياطي</p></div>' },

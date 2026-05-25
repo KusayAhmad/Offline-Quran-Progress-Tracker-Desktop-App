@@ -34,6 +34,12 @@ contextBridge.exposeInMainWorld('api', {
   // Progress
   getProgress: (studentId) => ipcRenderer.invoke('getProgress', studentId),
   updateProgress: (progress) => ipcRenderer.invoke('updateProgress', progress),
+  getProgressMatrix: (filters) => ipcRenderer.invoke('getProgressMatrix', filters),
+  getProgressMatrixStudent: (studentId) => ipcRenderer.invoke('getProgressMatrixStudent', studentId),
+  getProgressMatrixSurah: (surahId) => ipcRenderer.invoke('getProgressMatrixSurah', surahId),
+  getProgressMatrixLevel: (levelId) => ipcRenderer.invoke('getProgressMatrixLevel', levelId),
+  bulkUpdateProgress: (updates) => ipcRenderer.invoke('bulkUpdateProgress', updates),
+  getProgressStats: (studentId) => ipcRenderer.invoke('getProgressStats', studentId),
 
   // Stats
   getStats: () => ipcRenderer.invoke('getStats'),

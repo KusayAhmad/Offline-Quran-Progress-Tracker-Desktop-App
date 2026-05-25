@@ -1,0 +1,388 @@
+/* Progress Matrix Styles */
+
+/* Status Legend - always visible */
+.matrix-status-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  background: var(--bg-secondary, #f8f9fa);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.matrix-status-legend .legend-title {
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.85rem;
+}
+
+.matrix-status-legend .legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* View Tabs */
+.matrix-view-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+  padding-bottom: 0;
+}
+
+.matrix-tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.matrix-tab:hover {
+  color: var(--text-primary, #1e293b);
+  background: var(--bg-secondary, #f8f9fa);
+}
+
+.matrix-tab.active {
+  color: var(--primary, #2563eb);
+  border-bottom-color: var(--primary, #2563eb);
+  font-weight: 600;
+}
+
+/* Controls */
+.matrix-controls {
+  margin-bottom: 16px;
+}
+
+.matrix-control-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.matrix-control-label {
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+  font-size: 0.9rem;
+}
+
+.matrix-select {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: white;
+  min-width: 200px;
+  cursor: pointer;
+}
+
+.matrix-select:focus {
+  outline: none;
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Student View Header */
+.matrix-student-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.matrix-student-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.matrix-progress-badge {
+  background: var(--primary, #2563eb);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Student View Grid */
+.matrix-student-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 8px;
+}
+
+/* Surah View */
+.matrix-surah-header {
+  margin-bottom: 16px;
+}
+
+.matrix-surah-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.matrix-surah-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.matrix-surah-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: white;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e2e8f0);
+}
+
+.matrix-row-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+/* Matrix Grid Container */
+.matrix-grid-container {
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.matrix-scroll-wrapper {
+  overflow: auto;
+  max-height: 70vh;
+  scroll-behavior: smooth;
+}
+
+/* Matrix Table */
+.matrix-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+  min-width: max-content;
+}
+
+.matrix-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.matrix-table thead th {
+  background: var(--bg-secondary, #f8f9fa);
+  border-bottom: 2px solid var(--border-color, #e2e8f0);
+}
+
+.matrix-corner-cell {
+  position: sticky;
+  right: 0;
+  z-index: 30;
+  background: var(--bg-secondary, #f8f9fa);
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--text-secondary, #64748b);
+  min-width: 140px;
+  width: 140px;
+  text-align: center;
+  border-left: 2px solid var(--border-color, #e2e8f0);
+}
+
+.matrix-header-cell {
+  padding: 10px 8px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--text-secondary, #64748b);
+  text-align: center;
+  min-width: 60px;
+  width: 60px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matrix-name-cell {
+  position: sticky;
+  right: 0;
+  z-index: 10;
+  background: white;
+  padding: 8px 14px;
+  font-weight: 500;
+  font-size: 0.85rem;
+  min-width: 140px;
+  width: 140px;
+  border-left: 2px solid var(--border-color, #e2e8f0);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.matrix-data-cell {
+  padding: 4px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light, #f1f5f9);
+  border-left: 1px solid var(--border-light, #f1f5f9);
+}
+
+.matrix-table tbody tr:hover .matrix-name-cell,
+.matrix-table tbody tr:hover .matrix-data-cell {
+  background: var(--bg-hover, #f8fafc);
+}
+
+.matrix-table tbody tr:hover .matrix-name-cell {
+  background: var(--bg-secondary, #f8f9fa);
+}
+
+/* Progress Cell */
+.progress-cell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: background 0.15s;
+}
+
+.progress-cell:hover {
+  background: var(--bg-secondary, #f8f9fa);
+}
+
+.progress-cell-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-primary, #1e293b);
+}
+
+.progress-cell-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+}
+
+.progress-cell-badge.status-not-started {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.progress-cell-badge.status-in-progress {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.progress-cell-badge.status-memorized {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.progress-cell-badge.status-review-required {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.progress-cell-badge.status-weak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.progress-cell-badge.status-perfect {
+  background: #f3e8ff;
+  color: #7c3aed;
+}
+
+/* Progress Cell Dropdown */
+.progress-cell-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 50;
+  background: white;
+  border: 1px solid var(--border-color, #e2e8f0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 160px;
+  padding: 4px;
+  margin-top: 4px;
+}
+
+.progress-cell-dropdown.hidden {
+  display: none;
+}
+
+.progress-cell-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.progress-cell-option:hover {
+  background: var(--bg-secondary, #f8f9fa);
+}
+
+/* Full Grid Mode */
+.matrix-full-grid .matrix-scroll-wrapper {
+  max-height: 75vh;
+}
+
+/* Matrix Content Area */
+.matrix-content {
+  min-height: 200px;
+}
+
+/* Legend item colors */
+.legend-item.status-not-started {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.legend-item.status-in-progress {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.legend-item.status-memorized {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.legend-item.status-review-required {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.legend-item.status-weak {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.legend-item.status-perfect {
+  background: #f3e8ff;
+  color: #7c3aed;
+}

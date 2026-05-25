@@ -30,6 +30,7 @@ app.whenReady().then(() => {
   const levelsService = require('./src/services/levels');
   const surahsService = require('./src/services/surahs');
   const notesService = require('./src/services/notes');
+  const progressService = require('./src/services/progress');
 
   // IPC Handlers - Students
   ipcMain.handle('getStudents', (event, filters) => {
@@ -131,15 +132,31 @@ app.whenReady().then(() => {
   });
 
   ipcMain.handle('updateProgress', (event, progress) => {
-    const existing = db.prepare('SELECT id FROM progress WHERE student_id = ? AND surah_id = ?').get(progress.student_id, progress.surah_id);
-    if (existing) {
-      const stmt = db.prepare('UPDATE progress SET status = ?, last_reviewed = CURRENT_TIMESTAMP, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-      stmt.run(progress.status, existing.id);
-    } else {
-      const stmt = db.prepare('INSERT INTO progress (student_id, surah_id, status, last_reviewed) VALUES (?, ?, ?, CURRENT_TIMESTAMP)');
-      stmt.run(progress.student_id, progress.surah_id, progress.status);
-    }
-    return { success: true };
+    return progressService.updateProgress(db, progress.student_id, progress.surah_id, { status: progress.status });
+  });
+
+  ipcMain.handle('getProgressMatrix', (event, filters) => {
+    return progressService.getProgressMatrix(db, filters);
+  });
+
+  ipcMain.handle('getProgressMatrixStudent', (event, studentId) => {
+    return progressService.getStudentProgress(db, studentId);
+  });
+
+  ipcMain.handle('getProgressMatrixSurah', (event, surahId) => {
+    return progressService.getSurahProgress(db, surahId);
+  });
+
+  ipcMain.handle('getProgressMatrixLevel', (event, levelId) => {
+    return progressService.getLevelProgress(db, levelId);
+  });
+
+  ipcMain.handle('bulkUpdateProgress', (event, updates) => {
+    return progressService.bulkUpdateProgress(db, updates);
+  });
+
+  ipcMain.handle('getProgressStats', (event, studentId) => {
+    return progressService.getProgressStats(db, studentId);
   });
 
   // IPC Handlers - Stats
