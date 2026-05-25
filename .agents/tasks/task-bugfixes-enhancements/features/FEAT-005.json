@@ -2,7 +2,7 @@
   "id": "FEAT-005",
   "type": "feat",
   "description": "UI/UX refinements: keep status legend always visible, make matrix rows more spacious, ensure consistent status badges across all screens, and preserve user settings across navigation.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Update src/renderer/css/progress-matrix.css - Make .matrix-status-legend sticky with position: sticky; top: 0; z-index: 15; background: white. Add more padding to .matrix-data-cell (from 4px to 8px) and increase .matrix-name-cell min-height. Add a subtle bottom border on the legend.",
     "Step 2: Update src/renderer/js/screens/reports.js - Add the status legend (using the same StatusLegend component pattern) at the top of the weak report and review report sections so users can see what the statuses mean.",
@@ -24,5 +24,5 @@
     "Run npx jest --no-coverage and confirm all tests pass"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 136 tests pass. Implemented: (1) report-calc-basis paragraph in renderClassReport with level-aware text, (2) report-status-legend in renderWeakReport and renderReviewReport, (3) CSS styles for .report-calc-basis and .report-status-legend in reports.css, (4) .status-legend-sticky utility class in main.css, (5) re-apply language/dir in renderScreen() from cached settings, (6) settings.js updates AppRouter.settings on save and shows language-appropriate success message, (7) subtle border-bottom on .matrix-status-legend in progress-matrix.css."
 }
