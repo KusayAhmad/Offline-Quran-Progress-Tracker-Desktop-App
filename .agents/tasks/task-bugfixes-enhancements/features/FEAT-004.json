@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Add report filtering by level and circle, show the progress percentage calculation basis in the class report, and add a level-based report summary tab.",
-  "status": "in_progress",
+  "status": "completed",
   "steps": [
     "Step 1: Add new IPC handlers in main.js: 'getLevelReport' that calls reportsService.getLevelReport(db, levelId), and 'getClassReportFiltered' that calls a new function reportsService.getClassReportFiltered(db, filters) where filters can include { level_id, circle_name }.",
     "Step 2: Add API methods in preload.js: getLevelReport: (levelId) => ipcRenderer.invoke('getLevelReport', levelId), getClassReportFiltered: (filters) => ipcRenderer.invoke('getClassReportFiltered', filters).",
@@ -26,5 +26,5 @@
     "Run npx jest --no-coverage and confirm all tests pass including new reports tests"
   ],
   "blocked_reason": null,
-  "findings": ""
+  "findings": "All 136 tests pass (126 existing + 10 new). getClassReportFiltered returns totalSurahsForCalc per student and calculationBasis/levelName at top level. Level 1 has 16 surahs (99-114) for test assertions. The renderer uses Unicode escapes for Arabic strings consistent with FEAT-003 pattern."
 }
