@@ -2,7 +2,7 @@
   "id": "FEAT-004",
   "type": "feat",
   "description": "Reports system, Excel/PDF/Bundle export, Excel/Bundle import with merge/replace modes, Backup & Restore, and Settings screen. This completes all remaining functionality: reporting views, full export pipeline (Excel with multiple worksheets, PDF reports, compressed bundles), import with conflict handling, database backup/restore with auto-backup, and application settings.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create src/services/reports.js - Reports service: getStudentReport(student_id), getClassReport(profile_id), getLevelReport(level_id), getWeakReport(), getReviewNeededReport(), getGlobalSummary(). Each returns structured data suitable for rendering and export.",
     "Create src/renderer/js/screens/reports.js - Reports screen: tabbed interface for report types (Student Report, Class Report, Level Report, Weak Students, Review Needed, Global Summary). Each tab renders appropriate data with tables and charts. Include export buttons for each report.",

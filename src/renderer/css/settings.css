@@ -1,0 +1,68 @@
+/* Settings Screen Styles */
+
+.settings-form {
+  max-width: 600px;
+}
+
+.settings-group {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.settings-group-title {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  color: var(--text-primary, #333);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.form-field {
+  margin-bottom: 1rem;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+  color: var(--text-secondary, #666);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  direction: rtl;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #2196f3);
+}
+
+.settings-actions {
+  margin-top: 1rem;
+}
+
+.settings-result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+.settings-result-success {
+  background: #e8f5e9;
+  border: 1px solid #4caf50;
+  color: #2e7d32;
+}
+
+.settings-result-error {
+  background: #fbe9e7;
+  border: 1px solid #f44336;
+  color: #c62828;
+}

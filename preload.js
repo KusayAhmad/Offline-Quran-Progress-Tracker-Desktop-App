@@ -53,10 +53,21 @@ contextBridge.exposeInMainWorld('api', {
   exportExcel: () => ipcRenderer.invoke('exportExcel'),
   exportPDF: () => ipcRenderer.invoke('exportPDF'),
   exportBundle: () => ipcRenderer.invoke('exportBundle'),
-  importExcel: () => ipcRenderer.invoke('importExcel'),
-  importBundle: () => ipcRenderer.invoke('importBundle'),
+  importExcel: (mode) => ipcRenderer.invoke('importExcel', mode),
+  importBundle: (mode) => ipcRenderer.invoke('importBundle', mode),
   backup: () => ipcRenderer.invoke('backup'),
   restore: () => ipcRenderer.invoke('restore'),
+  getBackupList: () => ipcRenderer.invoke('getBackupList'),
+
+  // Reports
+  getClassReport: () => ipcRenderer.invoke('getClassReport'),
+  getWeakReport: () => ipcRenderer.invoke('getWeakReport'),
+  getReviewReport: () => ipcRenderer.invoke('getReviewReport'),
+  getGlobalSummary: () => ipcRenderer.invoke('getGlobalSummary'),
+
+  // Settings
+  getSettings: () => ipcRenderer.invoke('getSettings'),
+  updateSettings: (data) => ipcRenderer.invoke('updateSettings', data),
 
   // Profile
   getProfile: () => ipcRenderer.invoke('getProfile'),

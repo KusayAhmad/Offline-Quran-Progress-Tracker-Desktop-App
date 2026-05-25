@@ -14,10 +14,10 @@ const AppRouter = {
     surahs: SurahsScreen,
     'student-profile': StudentProfileScreen,
     'progress-matrix': ProgressMatrixScreen,
-    reports: { render: () => '<div class="screen-header"><h2 class="screen-title">التقارير</h2><p class="screen-subtitle">تقارير وإحصائيات</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4C8;</div><p class="empty-state-text">قريبا - شاشة التقارير</p></div>' },
-    'import-export': { render: () => '<div class="screen-header"><h2 class="screen-title">استيراد / تصدير</h2><p class="screen-subtitle">استيراد وتصدير البيانات</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4E5;</div><p class="empty-state-text">قريبا - شاشة الاستيراد والتصدير</p></div>' },
-    backup: { render: () => '<div class="screen-header"><h2 class="screen-title">النسخ الاحتياطي</h2><p class="screen-subtitle">إدارة النسخ الاحتياطية</p></div><div class="empty-state"><div class="empty-state-icon">&#x1F4BE;</div><p class="empty-state-text">قريبا - شاشة النسخ الاحتياطي</p></div>' },
-    settings: { render: () => '<div class="screen-header"><h2 class="screen-title">الإعدادات</h2><p class="screen-subtitle">إعدادات التطبيق</p></div><div class="empty-state"><div class="empty-state-icon">&#x2699;</div><p class="empty-state-text">قريبا - شاشة الإعدادات</p></div>' }
+    reports: ReportsScreen,
+    'import-export': ImportExportScreen,
+    backup: BackupScreen,
+    settings: SettingsScreen
   },
 
   async navigate(screenName, params) {

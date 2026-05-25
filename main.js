@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 let mainWindow;
 
@@ -194,14 +195,154 @@ app.whenReady().then(() => {
     return { success: true };
   });
 
-  // IPC Handlers - Export/Import/Backup (placeholders)
-  ipcMain.handle('exportExcel', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('exportPDF', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('exportBundle', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('importExcel', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('importBundle', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('backup', () => { return { success: false, message: 'Not implemented yet' }; });
-  ipcMain.handle('restore', () => { return { success: false, message: 'Not implemented yet' }; });
+  // IPC Handlers - Export/Import/Backup
+  const reportsService = require('./src/services/reports');
+  const exportService = require('./src/services/export');
+  const exportPdfService = require('./src/services/export-pdf');
+  const exportBundleService = require('./src/services/export-bundle');
+  const importService = require('./src/services/import');
+  const backupService = require('./src/services/backup');
+  const settingsService = require('./src/services/settings');
+
+  // Get DB path for backup operations
+  let dbPath;
+  try {
+    dbPath = path.join(app.getPath('userData'), 'quran-tracker.db');
+  } catch (e) {
+    dbPath = path.join(__dirname, 'quran-tracker.db');
+  }
+
+  let backupDir;
+  try {
+    backupDir = path.join(app.getPath('userData'), 'backups');
+  } catch (e) {
+    backupDir = path.join(__dirname, 'backups');
+  }
+
+  // Reports
+  ipcMain.handle('getClassReport', () => {
+    return reportsService.getClassReport(db);
+  });
+
+  ipcMain.handle('getWeakReport', () => {
+    return reportsService.getWeakReport(db);
+  });
+
+  ipcMain.handle('getReviewReport', () => {
+    return reportsService.getReviewNeededReport(db);
+  });
+
+  ipcMain.handle('getGlobalSummary', () => {
+    return reportsService.getGlobalSummary(db);
+  });
+
+  // Settings
+  ipcMain.handle('getSettings', () => {
+    return settingsService.getSettings(db);
+  });
+
+  ipcMain.handle('updateSettings', (event, data) => {
+    return settingsService.updateSettings(db, data);
+  });
+
+  // Backup
+  ipcMain.handle('getBackupList', () => {
+    return backupService.getBackupList(backupDir);
+  });
+
+  ipcMain.handle('exportExcel', async () => {
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        defaultPath: 'quran-export.xlsx',
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }]
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return await exportService.exportToExcel(db, result.filePath);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('exportPDF', async () => {
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        defaultPath: 'quran-summary.pdf',
+        filters: [{ name: 'PDF', extensions: ['pdf'] }]
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return await exportPdfService.exportSummaryPDF(db, result.filePath);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('exportBundle', async () => {
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        defaultPath: 'quran-bundle.zip',
+        filters: [{ name: 'ZIP', extensions: ['zip'] }]
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return await exportBundleService.exportBundle(db, result.filePath);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('importExcel', async (event, mode) => {
+    try {
+      const result = await dialog.showOpenDialog(mainWindow, {
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }],
+        properties: ['openFile']
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      const summary = await importService.importFromExcel(db, result.filePaths[0], mode || 'merge');
+      return { success: true, ...summary };
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('importBundle', async (event, mode) => {
+    try {
+      const result = await dialog.showOpenDialog(mainWindow, {
+        filters: [{ name: 'ZIP', extensions: ['zip'] }],
+        properties: ['openFile']
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      const summary = await importService.importFromBundle(db, result.filePaths[0], mode || 'merge');
+      return { success: true, ...summary };
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('backup', async () => {
+    try {
+      const result = await dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory']
+      });
+      if (result.canceled) {
+        return backupService.createBackup(dbPath, backupDir);
+      }
+      return backupService.createBackup(dbPath, result.filePaths[0]);
+    } catch (e) {
+      return backupService.createBackup(dbPath, backupDir);
+    }
+  });
+
+  ipcMain.handle('restore', async () => {
+    try {
+      const result = await dialog.showOpenDialog(mainWindow, {
+        filters: [{ name: 'Database', extensions: ['db'] }],
+        properties: ['openFile']
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return backupService.restoreBackup(result.filePaths[0], dbPath);
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
 
   createWindow();
 });
@@ -209,6 +350,26 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+app.on('before-quit', () => {
+  try {
+    const backupService = require('./src/services/backup');
+    let dbPathForBackup;
+    let backupDirForBackup;
+    try {
+      dbPathForBackup = path.join(app.getPath('userData'), 'quran-tracker.db');
+      backupDirForBackup = path.join(app.getPath('userData'), 'backups');
+    } catch (e) {
+      dbPathForBackup = path.join(__dirname, 'quran-tracker.db');
+      backupDirForBackup = path.join(__dirname, 'backups');
+    }
+    if (fs.existsSync(dbPathForBackup)) {
+      backupService.autoBackup(dbPathForBackup, backupDirForBackup);
+    }
+  } catch (e) {
+    // Auto-backup failure should not prevent app from closing
   }
 });
 
