@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-005",
+  "type": "feat",
+  "description": "UI/UX refinements: keep status legend always visible, make matrix rows more spacious, ensure consistent status badges across all screens, and preserve user settings across navigation.",
+  "status": "completed",
+  "steps": [
+    "Step 1: Update src/renderer/css/progress-matrix.css - Make .matrix-status-legend sticky with position: sticky; top: 0; z-index: 15; background: white. Add more padding to .matrix-data-cell (from 4px to 8px) and increase .matrix-name-cell min-height. Add a subtle bottom border on the legend.",
+    "Step 2: Update src/renderer/js/screens/reports.js - Add the status legend (using the same StatusLegend component pattern) at the top of the weak report and review report sections so users can see what the statuses mean.",
+    "Step 3: Update src/renderer/css/main.css - Add a .status-legend-sticky class that can be applied to any page's legend to make it stick to the top of the scrollable area.",
+    "Step 4: Update src/renderer/js/app.js - On init(), load settings and apply them (language, direction). Store the loaded settings in a global AppRouter.settings object so screens can access it without re-fetching. After each navigation, re-apply the language/direction from the cached settings.",
+    "Step 5: Update src/renderer/js/screens/reports.js renderClassReport() - Add a clear explanation paragraph above the table: 'نسبة الإنجاز محسوبة على أساس عدد السور المحفوظة والمتقنة من إجمالي 114 سورة' (Progress percentage is calculated based on memorized and mastered surahs out of total 114 surahs). When filtered by level, update this text accordingly.",
+    "Step 6: Ensure the settings screen displays a success message in the correct language after saving, and that the UI direction changes immediately upon language change without requiring a page reload."
+  ],
+  "acceptance_criteria": [
+    "Status legend remains visible while scrolling in the progress matrix",
+    "Matrix rows have more vertical spacing (8px padding in data cells)",
+    "Reports screen shows the status legend for weak/review reports",
+    "Class report shows the progress calculation formula explanation",
+    "Language/direction is applied immediately on settings change",
+    "Settings persist across screen navigation (no flash of wrong language)",
+    "All existing tests continue to pass"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage and confirm all tests pass"
+  ],
+  "blocked_reason": null,
+  "findings": "All 136 tests pass. Implemented: (1) report-calc-basis paragraph in renderClassReport with level-aware text, (2) report-status-legend in renderWeakReport and renderReviewReport, (3) CSS styles for .report-calc-basis and .report-status-legend in reports.css, (4) .status-legend-sticky utility class in main.css, (5) re-apply language/dir in renderScreen() from cached settings, (6) settings.js updates AppRouter.settings on save and shows language-appropriate success message, (7) subtle border-bottom on .matrix-status-legend in progress-matrix.css."
+}

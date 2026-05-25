@@ -243,6 +243,14 @@ app.whenReady().then(() => {
     return reportsService.getClassReport(db);
   });
 
+  ipcMain.handle('getClassReportFiltered', (event, filters) => {
+    return reportsService.getClassReportFiltered(db, filters || {});
+  });
+
+  ipcMain.handle('getLevelReport', (event, levelId) => {
+    return reportsService.getLevelReport(db, levelId);
+  });
+
   ipcMain.handle('getWeakReport', () => {
     return reportsService.getWeakReport(db);
   });
@@ -331,6 +339,19 @@ app.whenReady().then(() => {
       if (result.canceled) return { success: false, message: 'Canceled' };
       const summary = await importService.importFromBundle(db, result.filePaths[0], mode || 'merge');
       return { success: true, ...summary };
+    } catch (e) {
+      return { success: false, message: e.message };
+    }
+  });
+
+  ipcMain.handle('downloadImportTemplate', async () => {
+    try {
+      const result = await dialog.showSaveDialog(mainWindow, {
+        defaultPath: 'import-template.xlsx',
+        filters: [{ name: 'Excel', extensions: ['xlsx'] }]
+      });
+      if (result.canceled) return { success: false, message: 'Canceled' };
+      return await importService.generateImportTemplate(result.filePath);
     } catch (e) {
       return { success: false, message: e.message };
     }

@@ -1,0 +1,28 @@
+{
+  "id": "FEAT-002",
+  "type": "feat",
+  "description": "Add import template download, file structure documentation on the import/export screen, and enhance the export bundle with lead-teacher metadata for consolidation support.",
+  "status": "completed",
+  "steps": [
+    "Step 1: Add a new IPC handler 'downloadImportTemplate' in main.js that generates a blank Excel file with the correct sheet names (Students, Levels, Progress) and column headers matching what importFromExcel() expects. Use dialog.showSaveDialog to let the user choose where to save.",
+    "Step 2: Add the corresponding API method in preload.js: downloadImportTemplate: () => ipcRenderer.invoke('downloadImportTemplate')",
+    "Step 3: Create a new service function in src/services/import.js called generateImportTemplate(filepath) that creates an Excel workbook with 3 sheets: 'Levels' (columns: ID, name_ar, name_en, description, sort_order), 'Students' (columns: ID, name_ar, name_en, level_name, notes), 'Progress' (columns: student_name, surah_name, surah_no, status). Add a sample row in each sheet showing example data.",
+    "Step 4: Update src/renderer/js/screens/import-export.js to add a new section at the top called 'قالب الاستيراد' (Import Template) that explains the required file format with a table showing each sheet name, required columns, and data types. Add a 'Download Template' button that calls window.api.downloadImportTemplate().",
+    "Step 5: Enhance src/services/export-bundle.js to add richer metadata.json fields: teacher_name, circle_name (from profiles.name_en), level_name, export_date, app_version, source_id (a UUID or hash to identify the source instance for merge conflict detection).",
+    "Step 6: Update the import-export screen to show a documentation section explaining the merge vs replace modes and how lead teachers can consolidate data from multiple teacher exports.",
+    "Step 7: Add a test in tests/services/import.test.js that calls generateImportTemplate(), verifies the file is created, opens it with ExcelJS, and confirms the sheet names and column headers exist."
+  ],
+  "acceptance_criteria": [
+    "The import/export screen displays clear documentation of the required file format",
+    "A 'Download Template' button generates a valid Excel file with correct headers",
+    "The generated template can be filled in and successfully imported via importFromExcel()",
+    "Export bundle metadata.json includes teacher_name, circle_name, export_date, app_version",
+    "New template generation test passes",
+    "All existing tests continue to pass"
+  ],
+  "verification": [
+    "Run npx jest --no-coverage and confirm all tests pass including the new template test"
+  ],
+  "blocked_reason": null,
+  "findings": "All 126 tests pass (123 existing + 3 new). The generateImportTemplate function creates an Excel file with sheets matching what importFromExcel expects. The template includes example data rows that can be imported successfully. Export bundle metadata now includes teacher_name, circle_name, institution, export_date, app_version, and source_id."
+}
