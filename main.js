@@ -26,65 +26,103 @@ app.whenReady().then(() => {
   const db = initDatabase();
 
   const stats = require('./src/services/stats');
+  const studentsService = require('./src/services/students');
+  const levelsService = require('./src/services/levels');
+  const surahsService = require('./src/services/surahs');
+  const notesService = require('./src/services/notes');
 
   // IPC Handlers - Students
-  ipcMain.handle('getStudents', () => {
-    return db.prepare('SELECT * FROM students WHERE archived = 0 ORDER BY name_ar').all();
+  ipcMain.handle('getStudents', (event, filters) => {
+    return studentsService.getAllStudents(db, filters);
+  });
+
+  ipcMain.handle('getStudent', (event, id) => {
+    return studentsService.getStudent(db, id);
   });
 
   ipcMain.handle('addStudent', (event, student) => {
-    const stmt = db.prepare('INSERT INTO students (name_ar, name_en, level_id, notes) VALUES (?, ?, ?, ?)');
-    const result = stmt.run(student.name_ar, student.name_en || null, student.level_id, student.notes || null);
-    return { id: result.lastInsertRowid };
+    return studentsService.addStudent(db, student);
   });
 
   ipcMain.handle('updateStudent', (event, student) => {
-    const stmt = db.prepare('UPDATE students SET name_ar = ?, name_en = ?, level_id = ?, notes = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-    stmt.run(student.name_ar, student.name_en, student.level_id, student.notes, student.id);
-    return { success: true };
+    const { id, ...data } = student;
+    return studentsService.updateStudent(db, id, data);
   });
 
   ipcMain.handle('archiveStudent', (event, studentId) => {
-    const stmt = db.prepare('UPDATE students SET archived = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?');
-    stmt.run(studentId);
-    return { success: true };
+    return studentsService.archiveStudent(db, studentId);
+  });
+
+  ipcMain.handle('searchStudents', (event, query) => {
+    return studentsService.searchStudents(db, query);
+  });
+
+  ipcMain.handle('getStudentsByLevel', (event, levelId) => {
+    return studentsService.getStudentsByLevel(db, levelId);
+  });
+
+  ipcMain.handle('getStudentProgress', (event, studentId) => {
+    return studentsService.getStudentProgress(db, studentId);
   });
 
   // IPC Handlers - Levels
   ipcMain.handle('getLevels', () => {
-    return db.prepare('SELECT * FROM levels ORDER BY sort_order').all();
+    return levelsService.getAllLevels(db);
+  });
+
+  ipcMain.handle('getLevel', (event, id) => {
+    return levelsService.getLevel(db, id);
   });
 
   ipcMain.handle('addLevel', (event, level) => {
-    const stmt = db.prepare('INSERT INTO levels (name_ar, name_en, description, sort_order) VALUES (?, ?, ?, ?)');
-    const result = stmt.run(level.name_ar, level.name_en || null, level.description || null, level.sort_order || 0);
-    return { id: result.lastInsertRowid };
+    return levelsService.addLevel(db, level);
   });
 
   ipcMain.handle('updateLevel', (event, level) => {
-    const stmt = db.prepare('UPDATE levels SET name_ar = ?, name_en = ?, description = ?, sort_order = ? WHERE id = ?');
-    stmt.run(level.name_ar, level.name_en, level.description, level.sort_order, level.id);
-    return { success: true };
+    const { id, ...data } = level;
+    return levelsService.updateLevel(db, id, data);
   });
 
   ipcMain.handle('deleteLevel', (event, levelId) => {
-    db.prepare('DELETE FROM level_surahs WHERE level_id = ?').run(levelId);
-    db.prepare('DELETE FROM levels WHERE id = ?').run(levelId);
-    return { success: true };
+    return levelsService.deleteLevel(db, levelId);
+  });
+
+  ipcMain.handle('duplicateLevel', (event, levelId) => {
+    return levelsService.duplicateLevel(db, levelId);
+  });
+
+  ipcMain.handle('reorderLevels', (event, orderedIds) => {
+    return levelsService.reorderLevels(db, orderedIds);
+  });
+
+  // IPC Handlers - Level Surahs
+  ipcMain.handle('getLevelSurahs', (event, levelId) => {
+    return levelsService.getLevelSurahs(db, levelId);
+  });
+
+  ipcMain.handle('addSurahToLevel', (event, levelId, surahId) => {
+    return levelsService.addSurahToLevel(db, levelId, surahId);
+  });
+
+  ipcMain.handle('removeSurahFromLevel', (event, levelId, surahId) => {
+    return levelsService.removeSurahFromLevel(db, levelId, surahId);
+  });
+
+  ipcMain.handle('reorderLevelSurahs', (event, levelId, orderedSurahIds) => {
+    return levelsService.reorderLevelSurahs(db, levelId, orderedSurahIds);
   });
 
   // IPC Handlers - Surahs
   ipcMain.handle('getSurahs', () => {
-    return db.prepare('SELECT * FROM surahs ORDER BY surah_no').all();
+    return surahsService.getAllSurahs(db);
   });
 
-  ipcMain.handle('getLevelSurahs', (event, levelId) => {
-    return db.prepare(`
-      SELECT s.* FROM surahs s
-      INNER JOIN level_surahs ls ON s.id = ls.surah_id
-      WHERE ls.level_id = ?
-      ORDER BY s.surah_no DESC
-    `).all(levelId);
+  ipcMain.handle('getSurah', (event, id) => {
+    return surahsService.getSurah(db, id);
+  });
+
+  ipcMain.handle('updateSurah', (event, id, data) => {
+    return surahsService.updateSurah(db, id, data);
   });
 
   // IPC Handlers - Progress
@@ -111,13 +149,15 @@ app.whenReady().then(() => {
 
   // IPC Handlers - Student Notes
   ipcMain.handle('getStudentNotes', (event, studentId) => {
-    return db.prepare('SELECT * FROM student_notes WHERE student_id = ? ORDER BY created_at DESC').all(studentId);
+    return notesService.getStudentNotes(db, studentId);
   });
 
   ipcMain.handle('addStudentNote', (event, note) => {
-    const stmt = db.prepare('INSERT INTO student_notes (student_id, content) VALUES (?, ?)');
-    const result = stmt.run(note.student_id, note.content);
-    return { id: result.lastInsertRowid };
+    return notesService.addNote(db, note.student_id, note.content, note.created_by);
+  });
+
+  ipcMain.handle('deleteStudentNote', (event, noteId) => {
+    return notesService.deleteNote(db, noteId);
   });
 
   // IPC Handlers - Profile

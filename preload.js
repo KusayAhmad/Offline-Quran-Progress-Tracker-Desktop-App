@@ -2,20 +2,34 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   // Students
-  getStudents: () => ipcRenderer.invoke('getStudents'),
+  getStudents: (filters) => ipcRenderer.invoke('getStudents', filters),
+  getStudent: (id) => ipcRenderer.invoke('getStudent', id),
   addStudent: (student) => ipcRenderer.invoke('addStudent', student),
   updateStudent: (student) => ipcRenderer.invoke('updateStudent', student),
   archiveStudent: (studentId) => ipcRenderer.invoke('archiveStudent', studentId),
+  searchStudents: (query) => ipcRenderer.invoke('searchStudents', query),
+  getStudentsByLevel: (levelId) => ipcRenderer.invoke('getStudentsByLevel', levelId),
+  getStudentProgress: (studentId) => ipcRenderer.invoke('getStudentProgress', studentId),
 
   // Levels
   getLevels: () => ipcRenderer.invoke('getLevels'),
+  getLevel: (id) => ipcRenderer.invoke('getLevel', id),
   addLevel: (level) => ipcRenderer.invoke('addLevel', level),
   updateLevel: (level) => ipcRenderer.invoke('updateLevel', level),
   deleteLevel: (levelId) => ipcRenderer.invoke('deleteLevel', levelId),
+  duplicateLevel: (levelId) => ipcRenderer.invoke('duplicateLevel', levelId),
+  reorderLevels: (orderedIds) => ipcRenderer.invoke('reorderLevels', orderedIds),
+
+  // Level Surahs
+  getLevelSurahs: (levelId) => ipcRenderer.invoke('getLevelSurahs', levelId),
+  addSurahToLevel: (levelId, surahId) => ipcRenderer.invoke('addSurahToLevel', levelId, surahId),
+  removeSurahFromLevel: (levelId, surahId) => ipcRenderer.invoke('removeSurahFromLevel', levelId, surahId),
+  reorderLevelSurahs: (levelId, orderedSurahIds) => ipcRenderer.invoke('reorderLevelSurahs', levelId, orderedSurahIds),
 
   // Surahs
   getSurahs: () => ipcRenderer.invoke('getSurahs'),
-  getLevelSurahs: (levelId) => ipcRenderer.invoke('getLevelSurahs', levelId),
+  getSurah: (id) => ipcRenderer.invoke('getSurah', id),
+  updateSurah: (id, data) => ipcRenderer.invoke('updateSurah', id, data),
 
   // Progress
   getProgress: (studentId) => ipcRenderer.invoke('getProgress', studentId),
@@ -23,6 +37,11 @@ contextBridge.exposeInMainWorld('api', {
 
   // Stats
   getStats: () => ipcRenderer.invoke('getStats'),
+
+  // Student Notes
+  getStudentNotes: (studentId) => ipcRenderer.invoke('getStudentNotes', studentId),
+  addStudentNote: (note) => ipcRenderer.invoke('addStudentNote', note),
+  deleteStudentNote: (noteId) => ipcRenderer.invoke('deleteStudentNote', noteId),
 
   // Export/Import/Backup
   exportExcel: () => ipcRenderer.invoke('exportExcel'),
@@ -35,9 +54,5 @@ contextBridge.exposeInMainWorld('api', {
 
   // Profile
   getProfile: () => ipcRenderer.invoke('getProfile'),
-  updateProfile: (profile) => ipcRenderer.invoke('updateProfile', profile),
-
-  // Student Notes
-  getStudentNotes: (studentId) => ipcRenderer.invoke('getStudentNotes', studentId),
-  addStudentNote: (note) => ipcRenderer.invoke('addStudentNote', note)
+  updateProfile: (profile) => ipcRenderer.invoke('updateProfile', profile)
 });

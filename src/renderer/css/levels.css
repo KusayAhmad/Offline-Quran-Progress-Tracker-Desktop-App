@@ -1,0 +1,161 @@
+/* ============================================
+   Levels Management Screen Styles
+   ============================================ */
+
+.levels-toolbar {
+  margin-bottom: var(--spacing-lg);
+}
+
+.levels-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-lg);
+}
+
+@media (max-width: 1024px) {
+  .levels-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.levels-list-panel,
+.levels-surahs-panel {
+  background-color: var(--color-surface);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.panel-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-primary);
+}
+
+.levels-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.level-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.level-card:hover {
+  border-color: var(--color-primary-light);
+  box-shadow: var(--shadow-sm);
+}
+
+.level-card-active {
+  border-color: var(--color-primary);
+  background-color: var(--status-in-progress-bg);
+}
+
+.level-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.level-card-order {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  flex-shrink: 0;
+}
+
+.level-card-info {
+  flex: 1;
+}
+
+.level-card-name {
+  font-weight: 600;
+  font-size: var(--font-size-base);
+}
+
+.level-card-desc {
+  font-size: var(--font-size-xs);
+  margin-top: var(--spacing-xs);
+}
+
+.level-card-actions {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+/* Surah Assignment Panel */
+.surahs-assignment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.surahs-assigned h4,
+.surahs-available h4 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-bottom: var(--spacing-sm);
+}
+
+.surahs-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.surah-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--status-memorized-bg);
+  color: var(--status-memorized);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+}
+
+.surah-chip-remove {
+  background: none;
+  border: none;
+  color: var(--status-not-started);
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.surah-chip-remove:hover {
+  color: #b91c1c;
+}
+
+/* Surahs screen toolbar */
+.surahs-toolbar {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.form-select-sm {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-xs);
+  min-width: 120px;
+}

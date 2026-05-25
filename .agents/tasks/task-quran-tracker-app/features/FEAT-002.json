@@ -2,7 +2,7 @@
   "id": "FEAT-002",
   "type": "feat",
   "description": "Students management, Levels management, Surahs management, and Student Profile screens. Full CRUD for students (add, edit, archive, search, filter), levels (add, edit, reorder, delete, duplicate), and surahs (list, level mapping, edit). Student profile with basic info, progress summary, notes, and review history.",
-  "status": "pending",
+  "status": "in_progress",
   "steps": [
     "Create src/services/students.js - Student service: getAllStudents(filters), getStudent(id), addStudent({full_name, level_id, gender, notes}), updateStudent(id, data), archiveStudent(id), searchStudents(query), getStudentsByLevel(level_id), getStudentProgress(student_id).",
     "Create src/services/levels.js - Level service: getAllLevels(), getLevel(id), addLevel({name, description}), updateLevel(id, data), deleteLevel(id), duplicateLevel(id), reorderLevels(orderedIds), getLevelSurahs(level_id), addSurahToLevel(level_id, surah_id), removeSurahFromLevel(level_id, surah_id), reorderLevelSurahs(level_id, orderedIds).",

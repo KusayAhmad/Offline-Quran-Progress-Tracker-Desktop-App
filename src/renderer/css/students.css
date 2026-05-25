@@ -1,0 +1,74 @@
+/* ============================================
+   Students Screen Styles
+   ============================================ */
+
+.students-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  flex-wrap: wrap;
+}
+
+.students-toolbar-actions {
+  display: flex;
+  gap: var(--spacing-sm);
+}
+
+.students-toolbar-filters {
+  display: flex;
+  gap: var(--spacing-sm);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.students-search {
+  min-width: 200px;
+}
+
+.students-filter {
+  min-width: 150px;
+}
+
+.student-name-cell {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.student-name-cell small {
+  font-family: var(--font-family-en);
+  font-size: var(--font-size-xs);
+}
+
+.notes-cell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.actions-cell {
+  display: flex;
+  gap: var(--spacing-xs);
+  white-space: nowrap;
+}
+
+.level-chip {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  background-color: var(--status-in-progress-bg);
+  color: var(--status-in-progress);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.clickable-row {
+  cursor: pointer;
+}
+
+.clickable-row:hover td {
+  background-color: var(--color-bg);
+}
